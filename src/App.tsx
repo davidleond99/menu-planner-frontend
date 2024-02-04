@@ -1,7 +1,8 @@
 import { Provider } from "react-redux";
 import "./App.css";
-import AppRouter from "./modules/app/router";
 import store from "./shared/store";
+import { AppRouter } from "./modules/app/router";
+import { NextUIProvider } from "@nextui-org/react";
 
 function App() {
   return (
@@ -18,7 +19,9 @@ function App() {
         </button>
       </div> */}
       <Provider store={store}>
-        <AppRouter />
+        <NextUIProvider>
+          <AppRouter />
+        </NextUIProvider>
       </Provider>
     </div>
   );

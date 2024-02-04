@@ -2,10 +2,10 @@ import { faEye, faEyeLowVision } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "../../../../shared/components/Button";
-import { Icon } from "../../../../shared/components/Icon";
-import { InputText } from "../../../../shared/components/InputText";
+import { InputText, Icon, Button } from "../../../../shared";
 import { RegisterSchema } from "../../utils";
+
+
 
 interface IRegisterProps {
   containerclassname?: string;

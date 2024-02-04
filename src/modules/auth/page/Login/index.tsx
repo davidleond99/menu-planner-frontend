@@ -1,17 +1,17 @@
-import { useFormik } from "formik";
-import { FC, useEffect, useState } from "react";
-import { InputText } from "../../../shared/components/InputText";
-import { Icon } from "../../../shared/components/Icon";
-import { Button } from "../../../shared/components/Button";
 import { faEye, faEyeLowVision } from "@fortawesome/free-solid-svg-icons";
+import { useFormik } from "formik";
+import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { LoginSchema } from "../utils";
-import { IAuthRequest } from "../types";
-import { useSelector } from "react-redux";
-// import { showMessage } from "../../../shared/redux/message";
-import { useAppDispatch } from "../../../shared/store";
-import { authSelector, loginUser } from "../redux";
-
+import {
+  useAppDispatch,
+  InputText,
+  Icon,
+  showMessage,
+} from "../../../../shared";
+import { loginUser } from "../../redux";
+import { IAuthRequest } from "../../types";
+import { LoginSchema } from "../../utils";
+import { Button } from "@nextui-org/react";
 
 interface ILoginProps {
   containerclassname?: string;
@@ -29,7 +29,7 @@ export const Login: FC<ILoginProps> = () => {
       password: "",
     },
     onSubmit: async () => {
-      await handleSubmit
+      await handleSubmit;
     },
     validationSchema: LoginSchema,
   });
@@ -37,32 +37,23 @@ export const Login: FC<ILoginProps> = () => {
   const navigate = useNavigate();
   const [viewPassword, setViewPassword] = useState(true);
 
-  const { logged, error} = useSelector(authSelector);
-
   const handleSubmit = async () => {
     const user: IAuthRequest = {
       usuario: formikLogin.values.user,
       contrasena: formikLogin.values.password,
     };
-    void dispatch(loginUser(user));
-    console.log(user);
+    const response = await dispatch(loginUser(user)).unwrap();
+    if (response) {
+      navigate("/menu", { replace: true });
+    } else {
+      dispatch(
+        showMessage({
+          severity: "error",
+          summary: "Credenciales invalidas",
+        })
+      );
+    }
   };
-
-  useEffect(() => {
-    // if (localStorage.getItem("expired")) {
-    //   dispatch(
-    //     showMessage({
-    //       severity: "info",
-    //       summary: "Debe iniciar sesión nuavemente",
-    //     })
-    //   );
-    //   localStorage.removeItem("expired");
-    // }
-    // if (logged) {
-    //   navigate("/menu", { replace: true });
-    // }
-    // if (error) dispatch(showMessage({ severity: "error", summary: error }));
-  }, [logged, error]);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-tl from-green-400 to-indigo-900 px-4 pt-5">
@@ -167,13 +158,13 @@ export const Login: FC<ILoginProps> = () => {
               disabled={!formikLogin.isValid || !formikLogin.dirty}
               aria-label="login"
               type="submit"
-              color={"bg-yellow-300"}
-              className="w-full  py-4 uppercase
+              className="w-full bg-blue-500 cursor-pointer py-4 uppercase
                "
               onClick={handleSubmit}
             >
               Entrar
             </Button>
+            <Button radius="full">Full</Button>
           </div>
         </div>
       </div>

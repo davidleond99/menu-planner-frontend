@@ -7,7 +7,7 @@ interface IPublicRoute {
 
 export const PublicRoute: FC<IPublicRoute> = ({ children }): ReactElement => {
   return localStorage.getItem('token') ? (
-    <Navigate replace to="/dashboard/participants" />
+    <Navigate replace to="/menu" />
   ) : (
     children
   );

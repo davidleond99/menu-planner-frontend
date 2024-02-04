@@ -11,8 +11,8 @@ import authReducer from "../../modules/auth/redux";
 import messageReducer from "../redux/message";
 
 const rootReducer = combineReducers({
-  auth: authReducer,
   message: messageReducer,
+  auth: authReducer,
 });
 
 const store = configureStore({

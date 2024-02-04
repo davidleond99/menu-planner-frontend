@@ -9,7 +9,6 @@ export const Button: FC<IButtonProps> = ({
   icon,
   children,
   type,
-  color,
   ...props
 }) => {
   return (
@@ -19,7 +18,7 @@ export const Button: FC<IButtonProps> = ({
       className={`flex items-center justify-center rounded-none
          py-2.5 px-4 text-sm font-medium text-black transition duration-150 ease-in-out disabled:opacity-50
       ${className}
-      ${loading ? "cursor-wait" : ""} ${color ? color : "bg-primary"} `}
+      ${loading ? "cursor-wait" : ""} `}
       disabled={loading || props.disabled}
     >
       {icon ? (
