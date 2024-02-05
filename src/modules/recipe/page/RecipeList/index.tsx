@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 
 import {
   Button,
-  Input,
+  Divider,
   Modal,
   ModalBody,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   Table,
   TableBody,
@@ -14,36 +13,21 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
-  Textarea,
+  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import { useAppDispatch } from "../../../../shared/store";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faEye, faListUl, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "../../../../shared/components";
 import { showMessage } from "../../../../shared/redux/message";
-import { useFormik } from "formik";
-import { ICreateRecipe, IGetRecipes } from "../../types";
-import { RecipeSchema } from "../../utils";
-import {
-  createRecipes,
-  deleteRecipes,
-  getRecipes,
-  updateRecipe,
-} from "../../application";
+import { IGetRecipes } from "../../types";
+import { deleteRecipes, getRecipes } from "../../application";
+import { useNavigate } from "react-router-dom";
 
 export const RecipeList = () => {
-  const formikRecipe = useFormik<ICreateRecipe>({
-    initialValues: {
-      name: "",
-      instructions: "",
-    },
-    onSubmit: async () => {},
-    validationSchema: RecipeSchema,
-  });
-
   const [recipes, setRecipes] = useState<IGetRecipes[]>([]);
-  const [name, setName] = useState("");
-  const [instructions, setInstructions] = useState("");
+  const [viewRecipes, setViewRecipes] = useState<IGetRecipes>();
+  const navigate = useNavigate();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const dispatch = useAppDispatch();
@@ -71,199 +55,119 @@ export const RecipeList = () => {
       );
     }
   };
+
   return (
-    <div className="flex flex-row m-4 gap-12 w-full ">
-      <div className="flex flex-wrap justify-center align-middle items-center">
-        <Button className="" onPress={onOpen}>
-          Añadir Receta
-        </Button>
-      </div>
-      <Table
-        className="w-1/2 mt-6 ml-4 flex flex-wrap justify-center content-center"
-        aria-label="Example table with dynamic content"
+    <div className="flex flex-col items-center w-full mt-4">
+      <Button
+        color="primary"
+        onClick={() => {
+          navigate("form");
+        }}
       >
-        <TableHeader className="">
-          <TableColumn>Nombre</TableColumn>
-          <TableColumn>Instrucciones</TableColumn>
-          <TableColumn>Acciones</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {recipes.length > 0 ? (
-            recipes.map((recipe) => (
-              <TableRow key={recipe.id}>
-                <TableCell className=" justify-start content-start">
-                  {recipe.name}
-                </TableCell>
-                <TableCell className=" justify-start content-start">
-                  {recipe.instructions}
-                </TableCell>
+        Añadir Receta
+      </Button>
 
-                <TableCell>
-                  <div className=" justify-start content-start">
-                    <Button
-                      isIconOnly
-                      onPress={() => {
-                        void formikRecipe.setFieldValue("id", recipe.id);
+      <div className="w-full p-8">
+        <Table aria-label="Example table with dynamic content">
+          <TableHeader className="">
+            <TableColumn>Nombre</TableColumn>
+            <TableColumn>Instrucciones</TableColumn>
+            <TableColumn>Acciones</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {recipes.length > 0 ? (
+              recipes.map((recipe) => (
+                <TableRow key={recipe.id}>
+                  <TableCell className=" justify-start content-start">
+                    {recipe.name}
+                  </TableCell>
+                  <TableCell className=" justify-start content-start">
+                    {recipe.instructions}
+                  </TableCell>
 
-                        void formikRecipe.setFieldValue("name", recipe.name);
-                        void formikRecipe.setFieldValue(
-                          "unity",
-                          recipe.instructions
-                        );
-
-                        setName(recipe.name);
-                        setInstructions(recipe.instructions);
-                        console.log(formikRecipe.values.id);
-                        onOpen();
-                      }}
-                      size="sm"
-                      className="w-1/4"
-                      color="primary"
-                      endContent={<Icon icon={faEdit} />}
-                    ></Button>
-                    <Button
-                      className="ml-4 w-1/4"
-                      isIconOnly
-                      size="sm"
-                      onClick={() => {
-                        handleDelete(recipe.id);
-                      }}
-                      color="danger"
-                      endContent={<Icon icon={faTrash} />}
-                    ></Button>
-                  </div>
-                </TableCell>
+                  <TableCell>
+                    <div className=" justify-start content-start">
+                      <Tooltip content="Ver ingredientes">
+                        <Button
+                          aria-label="Ver ingredientes"
+                          isIconOnly
+                          onClick={() => {
+                            console.log(recipe);
+                          }}
+                          onPress={() => {
+                            onOpen();
+                            setViewRecipes(recipe);
+                          }}
+                          size="sm"
+                          className="w-1/4 mr-4 bg-indigo-400"
+                          endContent={<Icon icon={faEye} />}
+                        />
+                      </Tooltip>
+                      <Tooltip content="Editar">
+                        <Button
+                          isIconOnly
+                          aria-label="Editar"
+                          onPress={() => {}}
+                          size="sm"
+                          className="w-1/4 bg-green-400"
+                          endContent={<Icon icon={faEdit} />}
+                        />
+                      </Tooltip>
+                      <Tooltip content="Eliminar">
+                        <Button
+                          aria-label="Eliminar"
+                          className="ml-4 w-1/4"
+                          isIconOnly
+                          size="sm"
+                          onClick={() => {
+                            handleDelete(recipe.id);
+                          }}
+                          color="danger"
+                          endContent={<Icon icon={faTrash} />}
+                        />
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell>No hay datos</TableCell>
+                <TableCell> </TableCell>
+                <TableCell> </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell>No hay datos</TableCell>
-              <TableCell> </TableCell>
-              <TableCell> </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            )}
+          </TableBody>
+        </Table>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-        <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader className="flex flex-col gap-1">
-                Modal Title
-              </ModalHeader>
-              <ModalBody>
-                <form className="flex flex-col gap-4">
-                  <Input
-                    onBlur={formikRecipe.handleBlur}
-                    isRequired
-                    errorMessage={
-                      formikRecipe.touched.name ? formikRecipe.errors.name : ""
-                    }
-                    isInvalid={
-                      !!formikRecipe.errors.name && !!formikRecipe.touched.name
-                    }
-                    value={name}
-                    onChange={(e) => {
-                      setName(e.target.value);
-                      void formikRecipe.setFieldValue("name", e.target.value);
-                    }}
-                    label="Nombre"
-                    placeholder="Nombre de la receta"
-                    type="text"
-                  />
-                  <Textarea
-                    onBlur={formikRecipe.handleBlur}
-                    isRequired
-                    errorMessage={
-                      formikRecipe.touched.instructions
-                        ? formikRecipe.errors.instructions
-                        : ""
-                    }
-                    isInvalid={
-                      !!formikRecipe.errors.instructions &&
-                      !!formikRecipe.touched.instructions
-                    }
-                    value={instructions}
-                    onChange={(e) => {
-                      setInstructions(e.target.value);
-                      void formikRecipe.setFieldValue(
-                        "instructions",
-                        e.target.value
-                      );
-                    }}
-                    label="Instrucciones"
-                    placeholder="Instrucciones de elaboración"
-                    type="text"
-                  />
-                </form>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  color="danger"
-                  onClick={() => {
-                    setName("");
-                    setInstructions("");
-                  }}
-                  variant="light"
-                  onPress={onClose}
-                >
-                  Cancelar
-                </Button>
-                <Button
-                  disabled={!formikRecipe.isValid}
-                  color="primary"
-                  onClick={() => {
-                    if (formikRecipe.values.id !== 0) {
-                      console.log(formikRecipe.values);
-                      dispatch(
-                        updateRecipe({
-                          id: formikRecipe.values.id!,
-                          data: {
-                            name: formikRecipe.values.name,
-                            instructions: formikRecipe.values.instructions,
-                          },
-                        })
-                      )
-                        .unwrap()
-                        .then((data) => {
-                          const index = recipes.findIndex(
-                            (recipe) => recipe.id === data.id
-                          );
-
-                          if (index !== -1) {
-                            const updatedRecipes = [...recipes];
-                            updatedRecipes[index] = data;
-                            setRecipes(updatedRecipes);
-                          }
-
-                          setName("");
-                          setInstructions("");
-                        });
-                    } else {
-                      dispatch(
-                        createRecipes({
-                          name: formikRecipe.values.name,
-                          instructions: formikRecipe.values.instructions,
-                        })
-                      )
-                        .unwrap()
-                        .then((data) => {
-                          setRecipes([...recipes, data]);
-                          setName("");
-                          setInstructions("");
-                        });
-                    }
-                  }}
-                  onPress={onClose}
-                >
-                  Guardar
-                </Button>
-              </ModalFooter>
-            </>
-          )}
-        </ModalContent>
-      </Modal>
+        <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
+          <ModalContent>
+            {() => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Detalles de la Receta
+                </ModalHeader>
+                <ModalBody>
+                <div className="flex flex-row justify-start content-start">
+                  <p>{viewRecipes?.instructions}</p>
+                </div>
+                <Divider/>
+                  {viewRecipes?.ingredients.map((ingredient) => {
+                    return (
+                      <div className="flex justify-start content-start">
+                        <Icon icon={faListUl} className="mr-1 mt-2"/>
+                        <div className="flex m-1">{ingredient.name}</div>
+                        {/* <div className="flex p-1 m-1">{ingredient.category}</div>
+                        <div className="flex p-1 m-1">{ingredient.unity}</div> */}
+                      </div>
+                    );
+                  })}
+                </ModalBody>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      </div>
     </div>
   );
 };

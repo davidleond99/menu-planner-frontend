@@ -29,7 +29,7 @@ export const AppRouter: FC = (): ReactElement => {
         />
         <Route path="/" element={<MainLayout />}>
           <Route
-            path="menu"
+            path="menu/*"
             element={
               <PrivateRoute isAllowed={!!user}>
                 <Suspense>

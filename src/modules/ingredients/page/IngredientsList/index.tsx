@@ -22,6 +22,7 @@ import {
   TableColumn,
   TableHeader,
   TableRow,
+  Tooltip,
   useDisclosure,
 } from "@nextui-org/react";
 import { useAppDispatch } from "../../../../shared/store";
@@ -31,7 +32,7 @@ import { Icon } from "../../../../shared/components";
 import { showMessage } from "../../../../shared/redux/message";
 import { useFormik } from "formik";
 import { IngredientSchema } from "../../utils";
-import { CategoriaAlimento, UnidadMedida } from "../../../../shared/utils";
+import { CategoriaAlimento, UnidadMedida } from "../../../../shared/enums";
 import { useSelector } from "react-redux";
 
 export const IngredientsList = () => {
@@ -47,9 +48,6 @@ export const IngredientsList = () => {
   });
 
   const [ingredients, setIngredients] = useState<IGetIngredients[]>([]);
-  const [name, setName] = useState("");
-  const [unity, setUnity] = useState("");
-  const [category, setCategory] = useState("");
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const { loadingIngredients } = useSelector(ingredientsSelector);
 
@@ -61,6 +59,50 @@ export const IngredientsList = () => {
         setIngredients(data);
       });
   }, []);
+  const handleCreate = () => {
+    dispatch(
+      createIngredient({
+        name: formikIngredient.values.name,
+        category: formikIngredient.values.category,
+        unity: formikIngredient.values.unity,
+      })
+    )
+      .unwrap()
+      .then((data) => {
+        setIngredients([...ingredients, data]);
+        formikIngredient.resetForm();
+      });
+    dispatch(
+      showMessage({
+        severity: "success",
+        summary: "Ingredient created",
+      })
+    );
+  };
+
+  const handleUpdate = () => {
+    dispatch(
+      updateIngredient({
+        id: formikIngredient.values.id!,
+        data: {
+          name: formikIngredient.values.name,
+          category: formikIngredient.values.category,
+          unity: formikIngredient.values.unity,
+        },
+      })
+    )
+      .unwrap()
+      .then((data) => {
+        const index = ingredients.findIndex(
+          (ingredient) => ingredient.id === data.id
+        );
+        if (index !== -1) {
+          const updatedIngredients = [...ingredients];
+          updatedIngredients[index] = data;
+          setIngredients(updatedIngredients);
+        }
+      });
+  };
 
   const handleDelete = async (ingredientId: number) => {
     try {
@@ -78,6 +120,7 @@ export const IngredientsList = () => {
       );
     }
   };
+
   const unityOptions = Object.keys(UnidadMedida).map((key) => ({
     value: key,
     label: UnidadMedida[key as keyof typeof UnidadMedida],
@@ -86,108 +129,102 @@ export const IngredientsList = () => {
     value: key,
     label: CategoriaAlimento[key as keyof typeof CategoriaAlimento],
   }));
+
   return (
-    <div className="flex flex-row m-4 gap-12 w-full ">
-      <div className="flex flex-wrap justify-center align-middle items-center">
-        <Button
-          className=""
-          onPress={() => {
-            setName("");
-            setUnity("");
-            setCategory("");
-            onOpen();
-          }}
-        >
-          Añadir Ingrediente
-        </Button>
-      </div>
-      <Table
-        className="w-1/2 mt-6 ml-4 flex flex-wrap justify-center content-center"
-        aria-label="Example table with dynamic content"
-      >
-        <TableHeader className="">
-          <TableColumn>Nombre</TableColumn>
-          <TableColumn>Categoría</TableColumn>
-          <TableColumn>Unidad</TableColumn>
-          <TableColumn>Acciones</TableColumn>
-        </TableHeader>
-        <TableBody>
-          {ingredients.length > 0 ? (
-            ingredients.map((ingredient) => (
-              <TableRow key={ingredient.id}>
-                <TableCell className=" justify-start content-start">
-                  {ingredient.name}
-                </TableCell>
-                <TableCell className=" justify-start content-start">
-                  {ingredient.category}
-                </TableCell>
-                <TableCell className=" justify-start content-start">
-                  {ingredient.unity}
-                </TableCell>
-                <TableCell>
-                  <div className=" justify-start content-start">
-                    <Button
-                      isIconOnly
-                      onPress={() => {
-                        void formikIngredient.setFieldValue(
-                          "id",
-                          ingredient.id
-                        );
+    <div className="flex flex-col items-center w-full">
+      <Button color="primary" onPress={onOpen} className="mt-4">
+        Añadir Ingrediente
+      </Button>
 
-                        void formikIngredient.setFieldValue(
-                          "name",
-                          ingredient.name
-                        );
-                        void formikIngredient.setFieldValue(
-                          "unity",
-                          ingredient.unity
-                        );
-                        void formikIngredient.setFieldValue(
-                          "category",
-                          ingredient.category
-                        );
-                        setName(ingredient.name);
-                        setUnity(ingredient.unity);
-                        setCategory(ingredient.category);
-                        console.log(formikIngredient.values.id);
-                        onOpen();
-                      }}
-                      size="sm"
-                      className="w-1/4"
-                      color="primary"
-                      endContent={<Icon icon={faEdit} />}
-                    ></Button>
-                    <Button
-                      className="ml-4 w-1/4"
-                      isIconOnly
-                      size="sm"
-                      onClick={() => {
-                        handleDelete(ingredient.id!);
-                      }}
-                      color="danger"
-                      endContent={<Icon icon={faTrash} />}
-                    ></Button>
-                  </div>
-                </TableCell>
+      <div className="w-full p-8">
+        <Table aria-label="Example table with dynamic content">
+          <TableHeader className="">
+            <TableColumn>Nombre</TableColumn>
+            <TableColumn>Categoría</TableColumn>
+            <TableColumn>Unidad</TableColumn>
+            <TableColumn>Acciones</TableColumn>
+          </TableHeader>
+          <TableBody>
+            {ingredients.length > 0 ? (
+              ingredients.map((ingredient) => (
+                <TableRow key={ingredient.id}>
+                  <TableCell className=" justify-start content-start">
+                    {ingredient.name}
+                  </TableCell>
+                  <TableCell className=" justify-start content-start">
+                    {ingredient.category}
+                  </TableCell>
+                  <TableCell className=" justify-start content-start">
+                    {ingredient.unity}
+                  </TableCell>
+                  <TableCell>
+                    <div className=" justify-start content-start">
+                      <Tooltip content="Editar">
+                        <Button
+                          isIconOnly
+                          aria-label="Editar"
+                          onClick={() => {
+                            formikIngredient.resetForm({
+                              values: {
+                                id: ingredient.id,
+                                name: ingredient.name,
+                                category: ingredient.category,
+                                unity: ingredient.unity,
+                              },
+                            });
+                            onOpen();
+                          }}
+                          size="sm"
+                          className="w-1/4 bg-green-400"
+                          endContent={<Icon icon={faEdit} />}
+                        ></Button>
+                      </Tooltip>
+                      <Tooltip content="Eliminar">
+                        <Button
+                          aria-label="Eliminar"
+                          className="ml-4 w-1/4"
+                          isIconOnly
+                          size="sm"
+                          onClick={() => {
+                            handleDelete(ingredient.id!);
+                          }}
+                          color="danger"
+                          endContent={<Icon icon={faTrash} />}
+                        ></Button>
+                      </Tooltip>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell>No hay datos</TableCell>
+                <TableCell> </TableCell>
+                <TableCell> </TableCell>
+                <TableCell> </TableCell>
               </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell>No hay datos</TableCell>
-              <TableCell> </TableCell>
-              <TableCell> </TableCell>
-              <TableCell> </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+            )}
+          </TableBody>
+        </Table>
+      </div>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal
+        title="Hola"
+        hideCloseButton={true}
+        size={"xl"}
+        isOpen={isOpen}
+        onOpenChange={onOpenChange}
+        isDismissable={false}
+        backdrop={"blur"}
+      >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                Modal Title
+              <ModalHeader
+                className="flex flex-col gap-1"
+                title="Título del Modal"
+              >
+               {formikIngredient.values.id !== 0 ? "Actualizar Ingrediente" : "Crear Ingrediente "}
               </ModalHeader>
               <ModalBody>
                 <form className="flex flex-col gap-4">
@@ -203,9 +240,8 @@ export const IngredientsList = () => {
                       !!formikIngredient.errors.name &&
                       !!formikIngredient.touched.name
                     }
-                    value={name}
+                    value={formikIngredient.values.name}
                     onChange={(e) => {
-                      setName(e.target.value);
                       void formikIngredient.setFieldValue(
                         "name",
                         e.target.value
@@ -220,7 +256,6 @@ export const IngredientsList = () => {
                     onBlur={formikIngredient.handleBlur}
                     isRequired
                     onChange={(e) => {
-                      setCategory(e.target.value);
                       void formikIngredient.setFieldValue(
                         "category",
                         e.target.value
@@ -235,7 +270,7 @@ export const IngredientsList = () => {
                       !!formikIngredient.errors.category &&
                       !!formikIngredient.touched.category
                     }
-                    value={category}
+                    value={formikIngredient.values.category}
                     label="Categoría"
                     placeholder="Categoría del ingrediente"
                   >
@@ -250,7 +285,6 @@ export const IngredientsList = () => {
                     onBlur={formikIngredient.handleBlur}
                     isRequired
                     onChange={(e) => {
-                      setUnity(e.target.value);
                       void formikIngredient.setFieldValue(
                         "unity",
                         e.target.value
@@ -265,7 +299,7 @@ export const IngredientsList = () => {
                       !!formikIngredient.errors.unity &&
                       !!formikIngredient.touched.unity
                     }
-                    value={unity}
+                    value={formikIngredient.values.unity}
                     label="Unidad"
                     placeholder="Unidad de medida"
                   >
@@ -281,8 +315,14 @@ export const IngredientsList = () => {
                 <Button
                   color="danger"
                   onClick={() => {
-                    setName("");
-                    setUnity("");
+                    formikIngredient.resetForm({
+                      values: {
+                        id: 0,
+                        name: "",
+                        category: "",
+                        unity: "",
+                      },
+                    });
                   }}
                   variant="light"
                   onPress={onClose}
@@ -295,51 +335,22 @@ export const IngredientsList = () => {
                   color="primary"
                   onClick={() => {
                     if (formikIngredient.values.id !== 0) {
-                      console.log(formikIngredient.values);
-                      dispatch(
-                        updateIngredient({
-                          id: formikIngredient.values.id!,
-                          data: {
-                            name: formikIngredient.values.name,
-                            category: formikIngredient.values.category,
-                            unity: formikIngredient.values.unity,
-                          },
-                        })
-                      )
-                        .unwrap()
-                        .then((data) => {
-                          const index = ingredients.findIndex(
-                            (ingredient) => ingredient.id === data.id
-                          );
-                          if (index !== -1) {
-                            const updatedIngredients = [...ingredients];
-                            updatedIngredients[index] = data;
-                            setIngredients(updatedIngredients);
-                          }
-                          setName("");
-                          setUnity("");
-                          setCategory("");
-                        });
+                      handleUpdate();
                     } else {
-                      dispatch(
-                        createIngredient({
-                          name: formikIngredient.values.name,
-                          category: formikIngredient.values.category,
-                          unity: formikIngredient.values.unity,
-                        })
-                      )
-                        .unwrap()
-                        .then((data) => {
-                          setIngredients([...ingredients, data]);
-                          setName("");
-                          setUnity("");
-                          setCategory("");
-                        });
+                      handleCreate();
                     }
+                    formikIngredient.resetForm({
+                      values: {
+                        id: 0,
+                        name: "",
+                        category: "",
+                        unity: "",
+                      },
+                    });
                   }}
                   onPress={onClose}
                 >
-                  Guardar
+                  {formikIngredient.values.id !== 0 ? "Actualizar" : "Guardar "}
                 </Button>
               </ModalFooter>
             </>

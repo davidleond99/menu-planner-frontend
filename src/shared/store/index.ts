@@ -11,12 +11,14 @@ import authReducer from "../../modules/auth/redux";
 import messageReducer from "../redux/message";
 import { ingredientsReducer } from "../../modules/ingredients/application";
 import { recipesReducer } from "../../modules/recipe/application";
+import { menusReducer } from "../../modules/menu/application";
 
 const rootReducer = combineReducers({
   message: messageReducer,
   auth: authReducer,
   ingredients: ingredientsReducer,
   recipe: recipesReducer,
+  menu: menusReducer,
 });
 
 const store = configureStore({
