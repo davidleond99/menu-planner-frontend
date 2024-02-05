@@ -4,6 +4,7 @@ import {
   deleteIngredient,
   getIngredients,
   ingredientsSelector,
+  updateIngredient,
 } from "../../application";
 import {
   Button,
@@ -36,6 +37,7 @@ import { useSelector } from "react-redux";
 export const IngredientsList = () => {
   const formikIngredient = useFormik<ICreateIngredient>({
     initialValues: {
+      id: 0,
       name: "",
       category: "",
       unity: "",
@@ -87,7 +89,15 @@ export const IngredientsList = () => {
   return (
     <div className="flex flex-row m-4 gap-12 w-full ">
       <div className="flex flex-wrap justify-center align-middle items-center">
-        <Button className="" onPress={onOpen}>
+        <Button
+          className=""
+          onPress={() => {
+            setName("");
+            setUnity("");
+            setCategory("");
+            onOpen();
+          }}
+        >
           Añadir Ingrediente
         </Button>
       </div>
@@ -119,9 +129,27 @@ export const IngredientsList = () => {
                     <Button
                       isIconOnly
                       onPress={() => {
+                        void formikIngredient.setFieldValue(
+                          "id",
+                          ingredient.id
+                        );
+
+                        void formikIngredient.setFieldValue(
+                          "name",
+                          ingredient.name
+                        );
+                        void formikIngredient.setFieldValue(
+                          "unity",
+                          ingredient.unity
+                        );
+                        void formikIngredient.setFieldValue(
+                          "category",
+                          ingredient.category
+                        );
                         setName(ingredient.name);
                         setUnity(ingredient.unity);
                         setCategory(ingredient.category);
+                        console.log(formikIngredient.values.id);
                         onOpen();
                       }}
                       size="sm"
@@ -134,7 +162,7 @@ export const IngredientsList = () => {
                       isIconOnly
                       size="sm"
                       onClick={() => {
-                        handleDelete(ingredient.id);
+                        handleDelete(ingredient.id!);
                       }}
                       color="danger"
                       endContent={<Icon icon={faTrash} />}
@@ -266,19 +294,48 @@ export const IngredientsList = () => {
                   disabled={!formikIngredient.isValid}
                   color="primary"
                   onClick={() => {
-                    dispatch(
-                      createIngredient({
-                        name: formikIngredient.values.name,
-                        category: formikIngredient.values.category,
-                        unity: formikIngredient.values.unity,
-                      })
-                    )
-                      .unwrap()
-                      .then((data) => {
-                        setIngredients([...ingredients, data]);
-                        setName("");
-                        setUnity("");
-                      });
+                    if (formikIngredient.values.id !== 0) {
+                      console.log(formikIngredient.values);
+                      dispatch(
+                        updateIngredient({
+                          id: formikIngredient.values.id!,
+                          data: {
+                            name: formikIngredient.values.name,
+                            category: formikIngredient.values.category,
+                            unity: formikIngredient.values.unity,
+                          },
+                        })
+                      )
+                        .unwrap()
+                        .then((data) => {
+                          const index = ingredients.findIndex(
+                            (ingredient) => ingredient.id === data.id
+                          );
+                          if (index !== -1) {
+                            const updatedIngredients = [...ingredients];
+                            updatedIngredients[index] = data;
+                            setIngredients(updatedIngredients);
+                          }
+                          setName("");
+                          setUnity("");
+                          setCategory("");
+                        });
+                    } else {
+                      dispatch(
+                        createIngredient({
+                          name: formikIngredient.values.name,
+                          category: formikIngredient.values.category,
+                          unity: formikIngredient.values.unity,
+                        })
+                      )
+                        .unwrap()
+                        .then((data) => {
+                          setIngredients([...ingredients, data]);
+                          setName("");
+                          setUnity("");
+                          setCategory("");
+                        });
+                    }
                   }}
                   onPress={onClose}
                 >

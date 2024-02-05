@@ -17,6 +17,7 @@ export interface IRecipe {
 }
 
 export interface ICreateRecipe {
+  id?: number;
   name: string;
   instructions: string;
 }

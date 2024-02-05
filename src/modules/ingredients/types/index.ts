@@ -5,7 +5,7 @@ export interface IIngredientState {
 }
 
 export interface IGetIngredients {
-  id: number;
+  id?: number;
   name: string;
   category: string;
   unity: string;
@@ -19,6 +19,7 @@ export interface IIngredient {
 }
 
 export interface ICreateIngredient {
+  id?: number;
   name: string;
   category: string;
   unity: string;

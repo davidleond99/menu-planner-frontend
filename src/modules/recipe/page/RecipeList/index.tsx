@@ -24,7 +24,12 @@ import { showMessage } from "../../../../shared/redux/message";
 import { useFormik } from "formik";
 import { ICreateRecipe, IGetRecipes } from "../../types";
 import { RecipeSchema } from "../../utils";
-import { createRecipes, deleteRecipes, getRecipes } from "../../application";
+import {
+  createRecipes,
+  deleteRecipes,
+  getRecipes,
+  updateRecipe,
+} from "../../application";
 
 export const RecipeList = () => {
   const formikRecipe = useFormik<ICreateRecipe>({
@@ -98,8 +103,17 @@ export const RecipeList = () => {
                     <Button
                       isIconOnly
                       onPress={() => {
+                        void formikRecipe.setFieldValue("id", recipe.id);
+
+                        void formikRecipe.setFieldValue("name", recipe.name);
+                        void formikRecipe.setFieldValue(
+                          "unity",
+                          recipe.instructions
+                        );
+
                         setName(recipe.name);
                         setInstructions(recipe.instructions);
+                        console.log(formikRecipe.values.id);
                         onOpen();
                       }}
                       size="sm"
@@ -200,18 +214,46 @@ export const RecipeList = () => {
                   disabled={!formikRecipe.isValid}
                   color="primary"
                   onClick={() => {
-                    dispatch(
-                      createRecipes({
-                        name: formikRecipe.values.name,
-                        instructions: formikRecipe.values.instructions,
-                      })
-                    )
-                      .unwrap()
-                      .then((data) => {
-                        setRecipes([...recipes, data]);
-                        setName("");
-                        setInstructions("");
-                      });
+                    if (formikRecipe.values.id !== 0) {
+                      console.log(formikRecipe.values);
+                      dispatch(
+                        updateRecipe({
+                          id: formikRecipe.values.id!,
+                          data: {
+                            name: formikRecipe.values.name,
+                            instructions: formikRecipe.values.instructions,
+                          },
+                        })
+                      )
+                        .unwrap()
+                        .then((data) => {
+                          const index = recipes.findIndex(
+                            (recipe) => recipe.id === data.id
+                          );
+
+                          if (index !== -1) {
+                            const updatedRecipes = [...recipes];
+                            updatedRecipes[index] = data;
+                            setRecipes(updatedRecipes);
+                          }
+
+                          setName("");
+                          setInstructions("");
+                        });
+                    } else {
+                      dispatch(
+                        createRecipes({
+                          name: formikRecipe.values.name,
+                          instructions: formikRecipe.values.instructions,
+                        })
+                      )
+                        .unwrap()
+                        .then((data) => {
+                          setRecipes([...recipes, data]);
+                          setName("");
+                          setInstructions("");
+                        });
+                    }
                   }}
                   onPress={onClose}
                 >

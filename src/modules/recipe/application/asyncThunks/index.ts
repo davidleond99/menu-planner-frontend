@@ -33,6 +33,27 @@ export const createRecipes = createAsyncThunk(
   }
 );
 
+export const updateRecipe = createAsyncThunk(
+  "patch/recipe",
+  async (
+    { id, data }: { id: number; data: ICreateRecipe },
+    { fulfillWithValue, rejectWithValue }
+  ) => {
+    try {
+      // dispatch(setLoadingIngredients());
+      const resp = await recipeService.updateItem<IGetRecipes, number>(
+        id,
+        data
+      );
+      return fulfillWithValue(resp.data);
+    } catch (error) {
+      return rejectWithValue(error);
+    } finally {
+      // dispatch(unsetLoadingIngredients());
+    }
+  }
+);
+
 export const deleteRecipes = createAsyncThunk(
   "delete/recipes",
   async (recipesId: number, { fulfillWithValue, rejectWithValue }) => {
