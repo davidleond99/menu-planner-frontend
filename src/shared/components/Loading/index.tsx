@@ -1,33 +1,23 @@
-import { FC } from 'react';
+import React from "react";
+import {Card, Skeleton} from "@nextui-org/react";
 
-interface ILoadingProps {
-  text?: string;
-}
-
-export const Loading: FC<ILoadingProps> = ({ text = 'Loading...' }) => {
+export default function Loading() {
   return (
-    <div className="mt-8 w-full animate-jump">
-      <div className="rounded">
-        <div className="relative mx-auto flex items-center justify-center">
-          <svg
-            className="absolute animate-spin"
-            width={48}
-            height={48}
-            viewBox="0 0 48 48"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M3.6 24C1.61178 24 -0.0276419 25.6207 0.269487 27.5866C0.794327 31.0591 2.07738 34.3893 4.04473 37.3337C6.68188 41.2805 10.4302 44.3566 14.8156 46.1731C19.201 47.9896 24.0266 48.4649 28.6822 47.5388C33.3377 46.6128 37.6141 44.327 40.9706 40.9706C44.327 37.6141 46.6128 33.3377 47.5388 28.6822C48.4649 24.0266 47.9896 19.201 46.1731 14.8156C44.3566 10.4302 41.2805 6.68188 37.3337 4.04473C34.3893 2.07738 31.0591 0.794328 27.5866 0.269487C25.6207 -0.0276419 24 1.61178 24 3.6V3.6C24 5.58822 25.6298 7.16143 27.5726 7.58425C29.619 8.02962 31.5746 8.85603 33.3336 10.0313C36.0963 11.8773 38.2496 14.5011 39.5212 17.5709C40.7927 20.6407 41.1254 24.0186 40.4772 27.2775C39.829 30.5364 38.2289 33.5299 35.8794 35.8794C33.5299 38.2289 30.5364 39.829 27.2775 40.4772C24.0186 41.1254 20.6407 40.7927 17.5709 39.5212C14.5011 38.2496 11.8773 36.0963 10.0313 33.3336C8.85603 31.5746 8.02962 29.619 7.58425 27.5726C7.16143 25.6298 5.58822 24 3.6 24V24Z"
-              fill="#ebbe24"
-            />
-          </svg>
-          <div className="h-[35px] w-[35px] rounded-full bg-slate-50" />
-        </div>
+    <Card className="w-[200px] space-y-5 p-4" radius="lg">
+      <Skeleton className="rounded-lg">
+        <div className="h-24 rounded-lg bg-default-300"></div>
+      </Skeleton>
+      <div className="space-y-3">
+        <Skeleton className="w-3/5 rounded-lg">
+          <div className="h-3 w-3/5 rounded-lg bg-default-200"></div>
+        </Skeleton>
+        <Skeleton className="w-4/5 rounded-lg">
+          <div className="h-3 w-4/5 rounded-lg bg-default-200"></div>
+        </Skeleton>
+        <Skeleton className="w-2/5 rounded-lg">  
+          <div className="h-3 w-2/5 rounded-lg bg-default-300"></div>
+        </Skeleton>
       </div>
-      <p className="mt-3 text-center text-base font-medium text-gray-800">
-        {text}
-      </p>
-    </div>
+    </Card>
   );
-};
+}

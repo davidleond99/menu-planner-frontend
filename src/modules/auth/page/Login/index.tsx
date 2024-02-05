@@ -2,30 +2,21 @@ import { faEye, faEyeLowVision } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  useAppDispatch,
-  InputText,
-  Icon,
-  showMessage,
-} from "../../../../shared";
-import { loginUser } from "../../redux";
+import { authSelector, loginUser } from "../../redux";
 import { IAuthRequest } from "../../types";
 import { LoginSchema } from "../../utils";
-import { Button } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
+import { useSelector } from "react-redux";
+import { Icon } from "../../../../shared/components";
+import { showMessage } from "../../../../shared/redux/message";
+import { useAppDispatch } from "../../../../shared/store";
 
-interface ILoginProps {
-  containerclassname?: string;
-}
 
-export interface ILogin {
-  user: string;
-  password: string;
-}
 
-export const Login: FC<ILoginProps> = () => {
-  const formikLogin = useFormik<ILogin>({
+export const Login: FC = () => {
+  const formikLogin = useFormik<IAuthRequest>({
     initialValues: {
-      user: "",
+      user_name: "",
       password: "",
     },
     onSubmit: async () => {
@@ -35,17 +26,26 @@ export const Login: FC<ILoginProps> = () => {
   });
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [viewPassword, setViewPassword] = useState(true);
 
   const handleSubmit = async () => {
     const user: IAuthRequest = {
-      usuario: formikLogin.values.user,
-      contrasena: formikLogin.values.password,
+      user_name: formikLogin.values.user_name,
+      password: formikLogin.values.password,
     };
-    const response = await dispatch(loginUser(user)).unwrap();
-    if (response) {
-      navigate("/menu", { replace: true });
-    } else {
+
+    try {
+      const response = await dispatch(loginUser(user)).unwrap();
+      if (response) {
+        navigate("/menu", { replace: true });
+      } else {
+        dispatch(
+          showMessage({
+            severity: "error",
+            summary: "Credenciales invalidas",
+          })
+        );
+      }
+    } catch (error) {
       dispatch(
         showMessage({
           severity: "error",
@@ -55,119 +55,122 @@ export const Login: FC<ILoginProps> = () => {
     }
   };
 
+  const [isVisible, setIsVisible] = useState(false);
+
+  const toggleVisibility = () => setIsVisible(!isVisible);
+  const { loading } = useSelector(authSelector);
+
   return (
-    <div className="min-h-screen w-full bg-gradient-to-tl from-green-400 to-indigo-900 px-4 pt-5">
-      <div className="flex flex-col items-center justify-center mt-16">
-        <h2 className="text-4xl leading-tight text-white">Menu Planner</h2>
+    <form>
+      <div className="min-h-screen w-full bg-gradient-to-tl from-green-400 to-indigo-900 px-4 pt-5">
+        <div className="flex flex-col items-center justify-center mt-16">
+          <h2 className="text-4xl leading-tight text-white">Menu Planner</h2>
 
-        <div className="mt-8  bg-white p-10  shadow md:w-1/2 lg:w-3/12">
-          <p
-            aria-label="Autenticarse"
-            className="text-2xl font-extrabold leading-6 "
-          >
-            Autenticarse
-          </p>
-          <p className="mt-4   leading-none text-gray-500">
-            ¿No tiene una cuenta?{" "}
-            <span
-              onClick={() => {
-                navigate("/auth/register");
-              }}
-              tabIndex={0}
-              role="link"
-              aria-label="Sign up here"
-              className="cursor-pointer   leading-none
-                              underline"
+          <div className="mt-8  bg-white p-10  shadow md:w-1/2 lg:w-3/12">
+            <p
+              aria-label="Autenticarse"
+              className="text-2xl font-extrabold leading-6 "
             >
-              {" "}
-              Registrarse
-            </span>
-          </p>
+              Autenticarse
+            </p>
+            <p className="mt-4   leading-none text-gray-500">
+              ¿No tiene una cuenta?{" "}
+              <span
+                onClick={() => {
+                  navigate("/auth/register");
+                }}
+                tabIndex={0}
+                role="link"
+                aria-label="Sign up here"
+                className="cursor-pointer   leading-none
+                              underline"
+              >
+                {" "}
+                Registrarse
+              </span>
+            </p>
 
-          <div className="mt-4">
-            <InputText
-              label="User"
-              helpertext={
-                formikLogin.touched.user ? formikLogin.errors.user : ""
-              }
-              value={formikLogin.values.user}
-              aria-label="enter user"
-              required
-              type="user"
-              name="user"
-              onBlur={formikLogin.handleBlur}
-              onChange={formikLogin.handleChange}
-              className=" mt-2 w-full py-3 pl-3"
-            />
-          </div>
-          <div className="mt-6  w-full">
-            <div className="mb-1 flex flex-row">
-              <label className="text-sm  leading-none ">Password</label>
-              <p className="ml-1 -mt-1 text-red-600">*</p>
-            </div>
-            <div className="relative flex h-11 items-center justify-center">
-              <input
-                value={formikLogin.values.password}
-                aria-label="enter Password"
-                name="password"
+            <div className="mt-4 w-full">
+              <Input
+                label="User"
+                errorMessage={
+                  formikLogin.touched.user_name
+                    ? formikLogin.errors.user_name
+                    : ""
+                }
+                isInvalid={
+                  !!formikLogin.errors.user_name &&
+                  !!formikLogin.touched.user_name
+                }
+                value={formikLogin.values.user_name}
+                aria-label="enter user"
+                required
+                type="user"
+                name="user_name"
                 onBlur={formikLogin.handleBlur}
                 onChange={formikLogin.handleChange}
-                required
-                type={`${viewPassword ? "password" : "text"}`}
-                className="mt-4 h-full w-full py-3 pl-3 focus:border focus:border-blue-700 focus:outline-none
-                text-sm font-normal dark:border-gray-200 dark:bg-gray-100 dark:text-gray-800 dark:focus:border-blue-700"
+                className="max-w-xs"
               />
-              <div className="absolute right-0 mt-4 mr-3 cursor-pointer">
-                <Icon
-                  onClick={() => {
-                    setViewPassword(!viewPassword);
-                  }}
-                  icon={viewPassword ? faEye : faEyeLowVision}
+            </div>
+            <div className="mt-6  w-full">
+              <div className="relative flex h-11 items-center justify-center">
+                <Input
+                  errorMessage={
+                    formikLogin.touched.password
+                      ? formikLogin.errors.password
+                      : ""
+                  }
+                  isInvalid={
+                    !!formikLogin.errors.password &&
+                    !!formikLogin.touched.password
+                  }
+                  label="Contraseña"
+                  value={formikLogin.values.password}
+                  name="password"
+                  onBlur={formikLogin.handleBlur}
+                  onChange={formikLogin.handleChange}
+                  required
+                  placeholder="Introduzca su contraseña"
+                  endContent={
+                    <button
+                      className="focus:outline-none"
+                      type="button"
+                      onClick={toggleVisibility}
+                    >
+                      {isVisible ? (
+                        <Icon
+                          icon={faEyeLowVision}
+                          className=" text-default-400 pointer-events-none"
+                        />
+                      ) : (
+                        <Icon
+                          icon={faEye}
+                          className="text-default-400 pointer-events-none"
+                        />
+                      )}
+                    </button>
+                  }
+                  type={isVisible ? "text" : "password"}
+                  className="max-w-xs mt-4"
                 />
               </div>
             </div>
-            {formikLogin.errors.password && formikLogin.touched.password ? (
-              <div className="mt-4 flex items-center justify-between text-red-400">
-                <p className="text-xs leading-3 tracking-normal">
-                  {formikLogin.errors.password}
-                </p>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="icon icon-tabler icon-tabler-circle-x"
-                  width={20}
-                  height={20}
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path stroke="none" d="M0 0h24v24H0z" />
-                  <circle cx={12} cy={12} r={9} />
-                  <path d="M10 10l4 4m0 -4l-4 4" />
-                </svg>
-              </div>
-            ) : (
-              ""
-            )}
-          </div>
-          <div className="mt-8">
-            <Button
-              // loading={loading}
-              disabled={!formikLogin.isValid || !formikLogin.dirty}
-              aria-label="login"
-              type="submit"
-              className="w-full bg-blue-500 cursor-pointer py-4 uppercase
+            <div className="mt-8">
+              <Button
+                isLoading={loading}
+                disabled={!formikLogin.isValid || !formikLogin.dirty}
+                aria-label="login"
+                type="submit"
+                className="w-full bg-gradient-to-tl from-green-300 to-indigo-400 cursor-pointer py-4 uppercase mt-4 font-semibold
                "
-              onClick={handleSubmit}
-            >
-              Entrar
-            </Button>
-            <Button radius="full">Full</Button>
+                onClick={handleSubmit}
+              >
+                Entrar
+              </Button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </form>
   );
 };

@@ -1,8 +1,8 @@
 import { Provider } from "react-redux";
 import "./App.css";
 import store from "./shared/store";
-import { AppRouter } from "./modules/app/router";
 import { NextUIProvider } from "@nextui-org/react";
+import AppRouter from "./modules/app/router";
 
 function App() {
   return (

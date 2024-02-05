@@ -1,6 +1,6 @@
 import { FC, ReactElement } from 'react';
 import { NavLink as DomNavLink } from 'react-router-dom';
-import { INavLink } from '../../../../shared';
+import { INavLink } from '../../../../shared/interfaces';
 
 export const NavLink: FC<INavLink> = ({
   end,

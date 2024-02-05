@@ -3,8 +3,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
 import { IAuthResponse, IAuthRequest } from "../types";
 import authServices from "../services";
-import { RootState } from "../../../shared";
-// import { showMessage } from "../../../shared";
+import { RootState } from "../../../shared/store";
 
 interface IAuthState {
   error: any;
@@ -71,6 +70,7 @@ export const loginUser = createAsyncThunk(
       if (response.status === 200) {
         localStorage.setItem("token", response.data.access_token);
         localStorage.setItem("user", JSON.stringify(response.data));
+        console.log(response.data)
         return fulfillWithValue(response.data);
       } else {
         // dispatch(

@@ -2,10 +2,9 @@ import { faEye, faEyeLowVision } from "@fortawesome/free-solid-svg-icons";
 import { useFormik } from "formik";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { InputText, Icon, Button } from "../../../../shared";
 import { RegisterSchema } from "../../utils";
-
-
+import { Button } from "@nextui-org/react";
+import { InputText, Icon } from "../../../../shared/components";
 
 interface IRegisterProps {
   containerclassname?: string;
@@ -42,11 +41,10 @@ export const Register: FC<IRegisterProps> = () => {
     return;
   };
 
-  
   return (
     <div className="max-w-8xl min-h-screen bg-gradient-to-tl from-green-400 to-indigo-900 px-4 pt-2">
       <div className="max-w-8xl flex flex-col items-center mt-8 justify-center">
-      <h2 className="text-4xl leading-tight text-white">Menu Planner</h2>
+        <h2 className="text-4xl leading-tight text-white">Menu Planner</h2>
 
         <div className="w-full mt-4 bg-white px-10 py-6 shadow md:w-1/3 lg:w-1/3">
           <p
@@ -222,7 +220,7 @@ export const Register: FC<IRegisterProps> = () => {
               disabled={!formikRegister.isValid || !formikRegister.dirty}
               aria-label="create"
               onClick={handleSubmit}
-              color={"bg-yellow-300"}
+              color="primary"
               className="w-full  py-4 uppercase"
             >
               Registrarse

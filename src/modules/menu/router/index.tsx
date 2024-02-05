@@ -7,7 +7,7 @@ export const MenuRouter: FC = (): ReactElement => {
     <Routes>
       <Route index element={<Menu />} />
       <Route path="menu" element={<Menu />} />
-      <Route path="*" element={<Navigate replace to="login" />} />
+      <Route path="*" element={<Navigate replace to="menu" />} />
     </Routes>
   );
 };

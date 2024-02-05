@@ -1,6 +1,6 @@
 export interface IAuthRequest {
-  usuario: string;
-  contrasena?: string;
+  user_name: string;
+  password?: string;
 }
 export interface IAuthResponse {
   access_token: string;
@@ -9,6 +9,6 @@ export interface IAuthResponse {
 
 export interface User {
   id: number;
-  nombre_apellidos: string;
-  usuario: string;
+  name: string;
+  user_name: string;
 }

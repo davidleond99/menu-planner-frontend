@@ -1,12 +1,14 @@
 import { FC, ReactElement, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { MainLayout } from "../../../shared";
-import { AuthRouter, authSelector } from "../../auth";
-import { IngredientsRouter } from "../../ingredients";
 import MenuRouter from "../../menu/router";
 import { useSelector } from "react-redux";
 import { PrivateRoute } from "./PrivateRoute";
 import { PublicRoute } from "./PublicRoute";
+import { authSelector } from "../../auth/redux";
+import { AuthRouter } from "../../auth/router";
+import IngredientsRouter from "../../ingredients/router";
+import { MainLayout } from "../../../shared/layouts";
+import RecipeRouter from "../../recipe/router";
 
 export const AppRouter: FC = (): ReactElement => {
   const { user } = useSelector(authSelector);
@@ -37,7 +39,17 @@ export const AppRouter: FC = (): ReactElement => {
             }
           />
           <Route
-            path="ingredients"
+            path="recipe/*"
+            element={
+              <PrivateRoute isAllowed={!!user}>
+                <Suspense>
+                  <RecipeRouter />
+                </Suspense>
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="ingredients/*"
             element={
               <PrivateRoute isAllowed={!!user}>
                 <Suspense>
