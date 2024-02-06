@@ -70,24 +70,11 @@ export const loginUser = createAsyncThunk(
       if (response.status === 200) {
         localStorage.setItem("token", response.data.access_token);
         localStorage.setItem("user", JSON.stringify(response.data));
-        console.log(response.data)
         return fulfillWithValue(response.data);
       } else {
-        // dispatch(
-        //   showMessage({
-        //     severity: "error",
-        //     summary: "Credenciales invalidas",
-        //   })
-        // );
         return rejectWithValue(undefined);
       }
     } catch (err: any) {
-      // dispatch(
-      //   showMessage({
-      //     severity: "error",
-      //     summary: "Credenciales invalidas",
-      //   })
-      // );
       return rejectWithValue(undefined);
     }
   }

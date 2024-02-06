@@ -3,8 +3,8 @@ import { useFormik } from "formik";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { RegisterSchema } from "../../utils";
-import { Button } from "@nextui-org/react";
-import { InputText, Icon } from "../../../../shared/components";
+import { Button, Input } from "@nextui-org/react";
+import { Icon } from "../../../../shared/components";
 
 interface IRegisterProps {
   containerclassname?: string;
@@ -73,9 +73,9 @@ export const Register: FC<IRegisterProps> = () => {
           <div className="flex flex-row ">
             <div className="flex w-full flex-col">
               <div className="mt-1 ">
-                <InputText
+                <Input
                   label="Nombre"
-                  helpertext={
+                  errorMessage={
                     formikRegister.touched.name
                       ? formikRegister.errors.name
                       : ""
@@ -91,9 +91,9 @@ export const Register: FC<IRegisterProps> = () => {
                 />
               </div>
               <div className="mt-4">
-                <InputText
+                <Input
                   label="Nombre de usuario"
-                  helpertext={
+                  errorMessage={
                     formikRegister.touched.userName
                       ? formikRegister.errors.userName
                       : ""

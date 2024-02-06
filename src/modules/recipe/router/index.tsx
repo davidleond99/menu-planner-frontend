@@ -8,7 +8,8 @@ export const RecipeRouter: FC = (): ReactElement => {
     <Routes>
       <Route index element={<RecipeList />} />
       <Route index path="recipe" element={<RecipeList />} />
-      <Route index path="/form" element={<RecipeForm />} />
+      <Route index path="/new" element={<RecipeForm />} />
+      <Route index path="/edit/:recipeId" element={<RecipeForm />} />
       <Route path="*" element={<Navigate replace to="recipe" />} />
     </Routes>
   );

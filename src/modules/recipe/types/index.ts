@@ -10,20 +10,19 @@ export interface IGetRecipes {
   id: number;
   name: string;
   instructions: string;
-ingredients: IIngredient[]
+  ingredients: IIngredient[];
 }
 
 export interface IRecipe {
   id: number;
   name: string;
   instructions: string;
-  ingredientsId: number[]
-
+  ingredientsId: number[];
 }
 
 export interface ICreateRecipe {
   id?: number;
   name: string;
   instructions: string;
-  ingredientsId: number[]
+  ingredientsId: number[];
 }

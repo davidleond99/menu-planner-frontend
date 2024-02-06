@@ -11,16 +11,14 @@ import { Icon } from "../../../../shared/components";
 import { showMessage } from "../../../../shared/redux/message";
 import { useAppDispatch } from "../../../../shared/store";
 
-
-
 export const Login: FC = () => {
   const formikLogin = useFormik<IAuthRequest>({
     initialValues: {
       user_name: "",
       password: "",
     },
-    onSubmit: async () => {
-      await handleSubmit;
+    onSubmit: () => {
+      handleSubmit;
     },
     validationSchema: LoginSchema,
   });

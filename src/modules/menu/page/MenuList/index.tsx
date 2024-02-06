@@ -25,40 +25,46 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "../../../../shared/components";
 import { showMessage } from "../../../../shared/redux/message";
-import { IGetRecipes } from "../../types";
-import { deleteRecipes, getRecipes } from "../../application";
 import { useNavigate } from "react-router-dom";
+import { getMenus, deleteMenu } from "../../../menu/application";
+import { IGetMenus } from "../../../menu/types";
 
-export const RecipeList = () => {
-  const [recipes, setRecipes] = useState<IGetRecipes[]>([]);
-  const [viewRecipes, setViewRecipes] = useState<IGetRecipes>();
-  const navigate = useNavigate();
+export const MenuList = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const [viewMenus, setViewMenus] = useState<IGetMenus>();
+
+  
+  const [menus, setMenus] = useState<IGetMenus[]>([]);
+  const navigate = useNavigate();
 
   const dispatch = useAppDispatch();
   useEffect(() => {
-    void dispatch(getRecipes())
+    void dispatch(getMenus())
       .unwrap()
       .then((data) => {
-        setRecipes(data);
+        setMenus(data);
       });
   }, []);
 
-  const handleDelete = async (recipeNmae: string) => {
+  const handleDelete = async (menuId: number) => {
     try {
-      await dispatch(deleteRecipes(recipeNmae));
-      setRecipes((prevRecipes) =>
-        prevRecipes.filter((recipe) => recipe.name !== recipeNmae)
-      );
+      await dispatch(deleteMenu(menuId));
+      setMenus((prevMenus) => prevMenus.filter((menu) => menu.id !== menuId));
     } catch (error) {
       dispatch(
         showMessage({
           severity: "error",
-          summary: "Error deleting recipe",
+          summary: "Error deleting Menu",
         })
       );
     }
   };
+
+  function sumDaysToDate(dateString: string, days: number) {
+    const dateObject = new Date(dateString);
+    dateObject.setDate(dateObject.getDate() + days);
+    return dateObject.toISOString().split("T")[0];
+  }
 
   return (
     <div className="flex flex-col items-center w-full mt-4">
@@ -68,39 +74,43 @@ export const RecipeList = () => {
           navigate("new");
         }}
       >
-        Añadir Receta
+        Añadir Menu
       </Button>
 
       <div className="w-full p-8">
         <Table aria-label="Example table with dynamic content">
           <TableHeader className="">
             <TableColumn>Nombre</TableColumn>
-            <TableColumn>Instrucciones</TableColumn>
+            <TableColumn>Fecha de inicio</TableColumn>
+            <TableColumn>Fecha de fin</TableColumn>
             <TableColumn>Acciones</TableColumn>
           </TableHeader>
           <TableBody>
-            {recipes.length > 0 ? (
-              recipes.map((recipe) => (
-                <TableRow key={recipe.id}>
+            {menus.length > 0 ? (
+              menus.map((menu) => (
+                <TableRow key={menu.id}>
                   <TableCell className=" justify-start content-start">
-                    {recipe.name}
+                    {menu.name}
                   </TableCell>
-                  <TableCell className=" felx flex-col">
-                    {recipe.instructions}
+                  <TableCell className=" justify-start content-start">
+                    {menu.dateStart.toString()}
+                  </TableCell>
+                  <TableCell className=" justify-start content-start">
+                    {sumDaysToDate(menu.dateStart, 6)}
                   </TableCell>
 
                   <TableCell>
                     <div className=" justify-start content-start">
-                      <Tooltip content="Ver ingredientes">
+                      <Tooltip content="Ver menu">
                         <Button
-                          aria-label="Ver ingredientes"
+                          aria-label="Ver menu"
                           isIconOnly
                           onClick={() => {
-                            console.log(recipe);
+                            console.log(menu);
                           }}
                           onPress={() => {
                             onOpen();
-                            setViewRecipes(recipe);
+                            setViewMenus(menu);
                           }}
                           size="sm"
                           className="w-1/4 mr-4 bg-indigo-400"
@@ -111,9 +121,7 @@ export const RecipeList = () => {
                         <Button
                           isIconOnly
                           aria-label="Editar"
-                          onClick={() => {
-                            navigate(`edit/${recipe.id}`);
-                          }}
+                          onPress={() => {}}
                           size="sm"
                           className="w-1/4 bg-green-400"
                           endContent={<Icon icon={faEdit} />}
@@ -126,7 +134,7 @@ export const RecipeList = () => {
                           isIconOnly
                           size="sm"
                           onClick={() => {
-                            handleDelete(recipe.name);
+                            handleDelete(menu.id);
                           }}
                           color="danger"
                           endContent={<Icon icon={faTrash} />}
@@ -141,27 +149,36 @@ export const RecipeList = () => {
                 <TableCell>No hay datos</TableCell>
                 <TableCell> </TableCell>
                 <TableCell> </TableCell>
+                <TableCell> </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
-
         <Modal backdrop="blur" isOpen={isOpen} onOpenChange={onOpenChange}>
           <ModalContent>
             {() => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  {` Detalles de la Receta  ' ${viewRecipes?.name} '`}
+                  {` Detalles de la Receta  ' ${viewMenus?.name} '`}
                 </ModalHeader>
                 <ModalBody>
-                  <div className="flex flex-col justify-start content-start">
-                    <p>{viewRecipes?.instructions}</p>
+                  <div className="flex flex-row justify-between">
+                    <div className="flex flex-row">
+                      <p>{`Fecha de inicio:`}</p>
+                      <p className="font-semibold ml-1">{`${viewMenus?.dateStart}`}</p>
+                    </div>
+                    <div className="flex flex-row">
+                      <p>{`Fecha de fin:`}</p>
+                      <p className="font-semibold ml-1">
+                        {sumDaysToDate(viewMenus!.dateStart, 6)}
+                      </p>
+                    </div>
                   </div>
                   <Divider />
-                  {viewRecipes?.ingredients.map((ingredient) => {
+                  {viewMenus?.recipes.map((recipe) => {
                     return (
                       <div
-                        key={ingredient.id}
+                        key={recipe.id}
                         className="flex justify-start content-start"
                       >
                         <Icon
@@ -169,7 +186,7 @@ export const RecipeList = () => {
                           size="2xs"
                           className="mr-1 mt-3"
                         />
-                        <div className="flex m-1">{ingredient.name}</div>
+                        <div className="flex m-1">{recipe.name}</div>
                       </div>
                     );
                   })}

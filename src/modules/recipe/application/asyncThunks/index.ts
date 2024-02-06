@@ -5,15 +5,23 @@ import recipeService from "../../services";
 export const getRecipes = createAsyncThunk(
   "get/recipe",
   async (_, { fulfillWithValue, rejectWithValue }) => {
-    // const state: RootState = getState();
     try {
-      // if (!state.ingredients.loadingIngredients) dispatch(setLoadingIngredients());
       const resp = await recipeService.getItems<IGetRecipes[]>();
       return fulfillWithValue(resp.data);
     } catch (error) {
       return rejectWithValue([]);
-    } finally {
-      // dispatch(unsetLoadingIngredients());
+    }
+  }
+);
+
+export const getRecipeById = createAsyncThunk(
+  "get/recipeById",
+  async (id: number, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const resp = await recipeService.getItemById<IGetRecipes, number>(id);
+      return fulfillWithValue<IGetRecipes>(resp.data);
+    } catch (error) {
+      return rejectWithValue(error);
     }
   }
 );
@@ -22,13 +30,10 @@ export const createRecipes = createAsyncThunk(
   "post/recipess",
   async (data: ICreateRecipe, { fulfillWithValue, rejectWithValue }) => {
     try {
-      // dispatch(setLoadingOccupations());
       const resp = await recipeService.createItem<IGetRecipes>(data);
       return fulfillWithValue(resp.data);
     } catch (error) {
       return rejectWithValue(error);
-    } finally {
-      // dispatch(unsetLoadingOccupations());
     }
   }
 );
@@ -40,7 +45,6 @@ export const updateRecipe = createAsyncThunk(
     { fulfillWithValue, rejectWithValue }
   ) => {
     try {
-      // dispatch(setLoadingIngredients());
       const resp = await recipeService.updateItem<IGetRecipes, number>(
         id,
         data
@@ -48,23 +52,18 @@ export const updateRecipe = createAsyncThunk(
       return fulfillWithValue(resp.data);
     } catch (error) {
       return rejectWithValue(error);
-    } finally {
-      // dispatch(unsetLoadingIngredients());
     }
   }
 );
 
 export const deleteRecipes = createAsyncThunk(
   "delete/recipes",
-  async (recipesId: number, { fulfillWithValue, rejectWithValue }) => {
+  async (recipeName: string, { fulfillWithValue, rejectWithValue }) => {
     try {
-      // dispatch(setdeleteServicesExtras());
-      const resp = await recipeService.delete(`${recipesId}`);
+      const resp = await recipeService.delete(`${recipeName}`);
       return fulfillWithValue(resp);
     } catch (error) {
       return rejectWithValue([]);
-    } finally {
-      // dispatch(unsetdeleteServicesExtras());
     }
   }
 );

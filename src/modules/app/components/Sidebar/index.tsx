@@ -14,7 +14,7 @@ export const Sidebar: FC<SidebarProps> = ({
   setShowSideBar,
 }): ReactElement => {
   const routes: INavLink[] = [
-    { to: "/", label: "Principal" },
+    { to: "menu/principal", label: "Principal" },
     { to: "menu", label: "Menu" },
     { to: "recipe", label: "Recetas" },
     { to: "ingredients", label: "Ingredientes" },

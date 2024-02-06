@@ -16,7 +16,6 @@ export const AppRouter: FC = (): ReactElement => {
   return (
     <BrowserRouter>
       <Routes>
-        {/* <Route path={'/server-error'} element={<PageServerError />} /> */}
         <Route
           path="/auth/*"
           element={
