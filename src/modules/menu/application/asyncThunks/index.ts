@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import menuService from "../../services";
+import { menuService, menuServiceByUser } from "../../services";
 import { IGetMenus, ICreateMenu } from "../../types";
 
 export const getMenus = createAsyncThunk(
@@ -15,11 +15,25 @@ export const getMenus = createAsyncThunk(
 );
 
 export const getMenuById = createAsyncThunk(
-  "get/menuById",
+  "get/menuByUserId",
   async (id: number, { fulfillWithValue, rejectWithValue }) => {
     try {
       const resp = await menuService.getItemById<IGetMenus, number>(id);
       return fulfillWithValue<IGetMenus>(resp.data);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const getMenuByUserId = createAsyncThunk(
+  "get/menuById",
+  async (userId: number, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const resp = await menuServiceByUser.getItemById<IGetMenus[], number>(
+        userId
+      );
+      return fulfillWithValue<IGetMenus[]>(resp.data);
     } catch (error) {
       return rejectWithValue(error);
     }

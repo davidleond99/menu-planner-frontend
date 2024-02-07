@@ -1,21 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { createSlice, PayloadAction, createAsyncThunk } from "@reduxjs/toolkit";
-import { IAuthResponse, IAuthRequest } from "../types";
-import authServices from "../services";
+import { IAuthResponse, IAuthRequest, User, ICreateUser } from "../types";
+import authServices, { userService } from "../services";
 import { RootState } from "../../../shared/store";
 
 interface IAuthState {
   error: any;
   loading: boolean;
-  lang: string;
   user: IAuthResponse | null;
 }
 
 const initialState: IAuthState = {
   error: null,
   loading: false,
-  lang: "es_ES",
   user: localStorage.getItem("user")
     ? JSON.parse(localStorage.getItem("user")!)
     : null,
@@ -76,6 +74,18 @@ export const loginUser = createAsyncThunk(
       }
     } catch (err: any) {
       return rejectWithValue(undefined);
+    }
+  }
+);
+
+export const createUser = createAsyncThunk(
+  "post/user",
+  async (data: ICreateUser, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const resp = await userService.createItem<User>(data);
+      return fulfillWithValue(resp.data);
+    } catch (error) {
+      return rejectWithValue(error);
     }
   }
 );

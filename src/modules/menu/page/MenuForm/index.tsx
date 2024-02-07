@@ -48,8 +48,19 @@ export const MenuForm = () => {
           recipesId: recipesid,
         })
       );
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Menu creado",
+        })
+      );
     } catch (error) {
-      console.log(error);
+      dispatch(
+        showMsg({
+          type: "failure",
+          msg: "Error",
+        })
+      );
     }
   };
 
@@ -66,8 +77,19 @@ export const MenuForm = () => {
           },
         })
       );
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Menu actualizado",
+        })
+      );
     } catch (error) {
-      console.log(error);
+      dispatch(
+        showMsg({
+          type: "failure",
+          msg: "Error",
+        })
+      );
     }
   }
 
@@ -91,8 +113,8 @@ export const MenuForm = () => {
     } catch (error) {
       dispatch(
         showMsg({
-          type: "success",
-          msg: "Proveedor asignado",
+          type: "failure",
+          msg: "Error",
         })
       );
     }
@@ -120,10 +142,10 @@ export const MenuForm = () => {
   };
 
   return (
-    <form className="flex flex-col gap-4 p-4 m-8 border border-gray-300 rounded-lg w-1/2">
+    <form className="flex flex-col gap-4 p-4 m-8 border border-gray-300 rounded-lg w-9/12">
       <div className="flex flex-row gap-6 items-center">
         <Input
-          className="border border-gray-400 rounded-large w-1/4 h-1/2"
+          className="border border-gray-400 rounded-large w-1/2 h-1/2"
           isRequired
           name="name"
           onBlur={formikMenu.handleBlur}
@@ -132,7 +154,7 @@ export const MenuForm = () => {
           value={formikMenu.values.name}
           onChange={formikMenu.handleChange}
           label="Nombre"
-          placeholder="Nombre de la receta"
+          placeholder="Nombre del menu"
           type="text"
         />
         <DatePicker
@@ -182,7 +204,6 @@ export const MenuForm = () => {
           isInvalid={
             !!formikMenu.errors.recipesId && !!formikMenu.touched.recipesId
           }
-          // value={formikMenu.values.recipesId}
           label="Recetas"
           placeholder="Selecione las recetas del menu"
         >
@@ -198,19 +219,17 @@ export const MenuForm = () => {
           className="mr-2 border border-gray-300"
           color="danger"
           variant="light"
-          onClick={() => {
-            navigate("-1");
-          }}
+          onClick={() => navigate(-1)}
         >
           Cancelar
         </Button>
         <Button
           className="cursor-pointer"
           color="primary"
-          // isDisabled={!formikMenu.isValid}
+          isDisabled={!formikMenu.isValid || !formikMenu.dirty}
           onClick={handleClick}
         >
-          Guardar
+          {formikMenu.values.id !== 0 ? "Actualizar" : "Guardar "}
         </Button>
       </div>
     </form>

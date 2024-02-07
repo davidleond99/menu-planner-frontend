@@ -46,16 +46,22 @@ export const RecipeList = () => {
 
   const handleDelete = async (recipeId: number) => {
     try {
-      console.log(recipeId)
+      console.log(recipeId);
       await dispatch(deleteRecipe(recipeId));
       setRecipes((prevRecipes) =>
         prevRecipes.filter((recipe) => recipe.id !== recipeId)
       );
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Receta eliminada",
+        })
+      );
     } catch (error) {
       dispatch(
         showMsg({
-          type: 'success',
-            msg: 'Proveedor asignado',
+          type: "failure",
+          msg: "Error",
         })
       );
     }
@@ -63,35 +69,32 @@ export const RecipeList = () => {
 
   return (
     <div className="flex flex-col items-center w-full mt-4">
-      <Button
-        color="primary"
-        onClick={() => {
-          navigate("new");
-        }}
-      >
+      <Button color="primary" onClick={() => navigate("new")}>
         Añadir Receta
       </Button>
 
-      <div className="w-full p-8">
-        <Table aria-label="Example table with dynamic content">
+      <div className="w-full p-8 flex justify-center items-center">
+        <Table className="">
           <TableHeader className="">
             <TableColumn>Nombre</TableColumn>
-            <TableColumn>Instrucciones</TableColumn>
-            <TableColumn>Acciones</TableColumn>
+            <TableColumn className="flex justify-center content-center items-center">
+              Instrucciones
+            </TableColumn>
+            <TableColumn >Acciones</TableColumn>
           </TableHeader>
           <TableBody>
             {recipes.length > 0 ? (
               recipes.map((recipe) => (
                 <TableRow key={recipe.id}>
-                  <TableCell className=" justify-start content-start">
+                  <TableCell className="">
                     {recipe.name}
                   </TableCell>
-                  <TableCell className=" felx flex-col">
+                  <TableCell className="">
                     {recipe.instructions}
                   </TableCell>
 
-                  <TableCell>
-                    <div className=" justify-start content-start">
+                  <TableCell className="w-1/4">
+                    <div className="">
                       <Tooltip content="Ver ingredientes">
                         <Button
                           aria-label="Ver ingredientes"
@@ -110,9 +113,7 @@ export const RecipeList = () => {
                         <Button
                           isIconOnly
                           aria-label="Editar"
-                          onClick={() => {
-                            navigate(`edit/${recipe.id}`);
-                          }}
+                          onClick={() => navigate(`edit/${recipe.id}`)}
                           size="sm"
                           className="w-1/4 bg-green-400"
                           endContent={<Icon icon={faEdit} />}
@@ -124,9 +125,7 @@ export const RecipeList = () => {
                           className="ml-4 w-1/4"
                           isIconOnly
                           size="sm"
-                          onClick={() => {
-                            handleDelete(recipe.id);
-                          }}
+                          onClick={() => handleDelete(recipe.id)}
                           color="danger"
                           endContent={<Icon icon={faTrash} />}
                         />

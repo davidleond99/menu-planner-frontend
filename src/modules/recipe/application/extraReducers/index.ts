@@ -12,7 +12,7 @@ export const extraReducers = (
   builder.addCase(getRecipes.rejected, (state) => {
     return {
       ...state,
-      Recipes: [],
+      recipes: [],
       loadedRecipes: false,
     };
   });

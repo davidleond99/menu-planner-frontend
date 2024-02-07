@@ -10,7 +10,7 @@ export const extraReducers = (builder: ActionReducerMapBuilder<IMenuState>) => {
   builder.addCase(getMenus.rejected, (state) => {
     return {
       ...state,
-      Menus: [],
+      menus: [],
       loadedMenus: false,
     };
   });

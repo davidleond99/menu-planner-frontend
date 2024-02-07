@@ -27,7 +27,7 @@ export const getRecipeById = createAsyncThunk(
 );
 
 export const createRecipes = createAsyncThunk(
-  "post/recipess",
+  "post/recipes",
   async (data: ICreateRecipe, { fulfillWithValue, rejectWithValue }) => {
     try {
       const resp = await recipeService.createItem<IGetRecipes>(data);

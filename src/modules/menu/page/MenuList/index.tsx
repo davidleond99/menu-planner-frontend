@@ -25,9 +25,11 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "../../../../shared/components";
 import { useNavigate } from "react-router-dom";
-import { getMenus, deleteMenu } from "../../../menu/application";
+import { deleteMenu, getMenuByUserId } from "../../../menu/application";
 import { IGetMenus } from "../../../menu/types";
 import { showMsg } from "../../../../shared/redux/message";
+import { useSelector } from "react-redux";
+import { authSelector } from "../../../auth/redux";
 
 export const MenuList = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
@@ -36,9 +38,11 @@ export const MenuList = () => {
   const [menus, setMenus] = useState<IGetMenus[]>([]);
   const navigate = useNavigate();
 
+  const { user } = useSelector(authSelector);
+
   const dispatch = useAppDispatch();
   useEffect(() => {
-    void dispatch(getMenus())
+    void dispatch(getMenuByUserId(user!.user.id))
       .unwrap()
       .then((data) => {
         setMenus(data);
@@ -49,11 +53,17 @@ export const MenuList = () => {
     try {
       await dispatch(deleteMenu(menuId));
       setMenus((prevMenus) => prevMenus.filter((menu) => menu.id !== menuId));
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Menu eliminado",
+        })
+      );
     } catch (error) {
       dispatch(
         showMsg({
-          type: 'success',
-            msg: 'Proveedor asignado',
+          type: "failure",
+          msg: "Error",
         })
       );
     }
@@ -76,8 +86,8 @@ export const MenuList = () => {
         Añadir Menu
       </Button>
 
-      <div className="w-full p-8">
-        <Table aria-label="Example table with dynamic content">
+      <div className="w-full p-8 flex justify-center content-center">
+        <Table className="w-7/12">
           <TableHeader className="">
             <TableColumn>Nombre</TableColumn>
             <TableColumn>Fecha de inicio</TableColumn>
@@ -118,9 +128,7 @@ export const MenuList = () => {
                         <Button
                           isIconOnly
                           aria-label="Editar"
-                          onClick={() => {
-                            navigate(`edit/${menu.id}`);
-                          }}
+                          onClick={() => navigate(`edit/${menu.id}`)}
                           size="sm"
                           className="w-1/4 bg-green-400"
                           endContent={<Icon icon={faEdit} />}
@@ -132,9 +140,7 @@ export const MenuList = () => {
                           className="ml-4 w-1/4"
                           isIconOnly
                           size="sm"
-                          onClick={() => {
-                            handleDelete(menu.id);
-                          }}
+                          onClick={() => handleDelete(menu.id)}
                           color="danger"
                           endContent={<Icon icon={faTrash} />}
                         />
@@ -158,18 +164,23 @@ export const MenuList = () => {
             {() => (
               <>
                 <ModalHeader className="flex flex-col gap-1">
-                  {` Detalles de la Receta  ' ${viewMenus?.name} '`}
+                  {` Detalles del Menu  ' ${viewMenus?.name} '`}
                 </ModalHeader>
                 <ModalBody>
                   <div className="flex flex-row justify-between">
                     <div className="flex flex-row">
                       <p>{`Fecha de inicio:`}</p>
-                      <p className="font-semibold ml-1">{`${viewMenus?.dateStart}`}</p>
+                      <p className="font-semibold ml-1">
+                        {" "}
+                        {new Date(viewMenus!.dateStart).toDateString()}
+                      </p>
                     </div>
                     <div className="flex flex-row">
                       <p>{`Fecha de fin:`}</p>
                       <p className="font-semibold ml-1">
-                        {sumDaysToDate(viewMenus!.dateStart, 6)}
+                        {new Date(
+                          sumDaysToDate(viewMenus!.dateStart, 6)
+                        ).toDateString()}
                       </p>
                     </div>
                   </div>

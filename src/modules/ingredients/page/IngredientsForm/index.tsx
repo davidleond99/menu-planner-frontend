@@ -40,7 +40,7 @@ export const IngredientsForm = () => {
   const dispatch = useAppDispatch();
   const { ingredientId } = useParams();
 
-  function handleSubmit(): void {
+  const handleSubmit = () => {
     if (formikIngredient.values.id !== 0) {
       handleUpdate();
     } else {
@@ -55,52 +55,75 @@ export const IngredientsForm = () => {
       },
     });
     navigate(-1);
-  }
-  const handleCreate = () => {
-    dispatch(
-      createIngredient({
-        name: formikIngredient.values.name,
-        category: formikIngredient.values.category,
-        unity: formikIngredient.values.unity,
-      })
-    )
-      .unwrap()
-      .then((data) => {
-        setIngredients([...ingredients, data]);
-        formikIngredient.resetForm();
-      })
-      .catch(console.log);
-    dispatch(
-      showMsg({
-        type: "success",
-        msg: "Proveedor asignado",
-      })
-    );
   };
-
-  const handleUpdate = () => {
-    dispatch(
-      updateIngredient({
-        id: parseInt(ingredientId!),
-        data: {
+  const handleCreate = () => {
+    try {
+      dispatch(
+        createIngredient({
           name: formikIngredient.values.name,
           category: formikIngredient.values.category,
           unity: formikIngredient.values.unity,
-        },
-      })
-    )
-      .unwrap()
-      .then((data) => {
-        const index = ingredients.findIndex(
-          (ingredient) => ingredient.id === data.id
-        );
-        if (index !== -1) {
-          const updatedIngredients = [...ingredients];
-          updatedIngredients[index] = data;
-          setIngredients(updatedIngredients);
-        }
-      })
-      .catch(console.log);
+        })
+      )
+        .unwrap()
+        .then((data) => {
+          setIngredients([...ingredients, data]);
+          formikIngredient.resetForm();
+        })
+        .catch(console.log);
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Ingrediente creado",
+        })
+      );
+    } catch (error) {
+      dispatch(
+        showMsg({
+          type: "failure",
+          msg: "Error",
+        })
+      );
+    }
+  };
+
+  const handleUpdate = () => {
+    try {
+      dispatch(
+        updateIngredient({
+          id: parseInt(ingredientId!),
+          data: {
+            name: formikIngredient.values.name,
+            category: formikIngredient.values.category,
+            unity: formikIngredient.values.unity,
+          },
+        })
+      )
+        .unwrap()
+        .then((data) => {
+          const index = ingredients.findIndex(
+            (ingredient) => ingredient.id === data.id
+          );
+          if (index !== -1) {
+            const updatedIngredients = [...ingredients];
+            updatedIngredients[index] = data;
+            setIngredients(updatedIngredients);
+          }
+        });
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Ingrediente actualizado",
+        })
+      );
+    } catch (error) {
+      dispatch(
+        showMsg({
+          type: "failure",
+          msg: "Error",
+        })
+      );
+    }
   };
 
   function handleCancel(): void {
@@ -112,7 +135,7 @@ export const IngredientsForm = () => {
         unity: "",
       },
     });
-    navigate("ingredients");
+    navigate(-1);
   }
   const navigate = useNavigate();
   const [ingredients, setIngredients] = useState<IGetIngredients[]>([]);
@@ -134,8 +157,8 @@ export const IngredientsForm = () => {
     } catch (error) {
       dispatch(
         showMsg({
-          type: "success",
-          msg: "Proveedor asignado",
+          type: "failure",
+          msg: "Error",
         })
       );
     }
@@ -217,7 +240,7 @@ export const IngredientsForm = () => {
         ))}
       </Select>
       <div className="flex justify-end m-3">
-        <Button color="danger" onClick={handleCancel} variant="light">
+        <Button color="danger" className="mr-3" onClick={handleCancel} variant="light">
           Cancelar
         </Button>
         <Button

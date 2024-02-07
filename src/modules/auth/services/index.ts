@@ -1,7 +1,7 @@
 import { AxiosResponse } from 'axios';
 import { IAuthRequest, IAuthResponse } from '../types';
 import { BaseCrudService } from '../../../shared/baseCrud';
-import { customAxiosAppWithoutAuth } from '../../../shared/axiosConfig';
+import customAxiosApp, { customAxiosAppWithoutAuth } from '../../../shared/axiosConfig';
 
 class AuthServices extends BaseCrudService {
   login(input: IAuthRequest): Promise<AxiosResponse<IAuthResponse>> {
@@ -10,3 +10,12 @@ class AuthServices extends BaseCrudService {
 }
 const authServices = new AuthServices(customAxiosAppWithoutAuth, '');
 export default authServices;
+
+
+export class UserService extends BaseCrudService {
+  constructor() {
+    super(customAxiosApp, "auth");
+  }
+}
+
+export const userService = new UserService();

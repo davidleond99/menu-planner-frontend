@@ -36,11 +36,17 @@ export const IngredientsList = () => {
       setIngredients((prevIngredients) =>
         prevIngredients.filter((ingredient) => ingredient.id !== ingredientId)
       );
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Ingrediente eliminado",
+        })
+      );
     } catch (error) {
       dispatch(
         showMsg({
-          type: 'success',
-            msg: 'Proveedor asignado',
+          type: "failure",
+          msg: "Error",
         })
       );
     }
@@ -53,9 +59,9 @@ export const IngredientsList = () => {
         Añadir Ingrediente
       </Button>
 
-      <div className="w-full p-8">
-        <Table aria-label="Example table with dynamic content">
-          <TableHeader className="">
+      <div className="w-full p-8 flex justify-center items-center">
+        <Table className="w-1/2">
+          <TableHeader>
             <TableColumn>Nombre</TableColumn>
             <TableColumn>Categoría</TableColumn>
             <TableColumn>Unidad</TableColumn>
@@ -65,17 +71,13 @@ export const IngredientsList = () => {
             {ingredients.length > 0 ? (
               ingredients.map((ingredient) => (
                 <TableRow key={ingredient.id}>
-                  <TableCell className=" justify-start content-start">
+                  <TableCell className="fle items-start">
                     {ingredient.name}
                   </TableCell>
-                  <TableCell className=" justify-start content-start">
-                    {ingredient.category}
-                  </TableCell>
-                  <TableCell className=" justify-start content-start">
-                    {ingredient.unity}
-                  </TableCell>
+                  <TableCell>{ingredient.category}</TableCell>
+                  <TableCell>{ingredient.unity}</TableCell>
                   <TableCell>
-                    <div className=" justify-start content-start">
+                    <div>
                       <Tooltip content="Editar">
                         <Button
                           isIconOnly

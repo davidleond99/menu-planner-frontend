@@ -34,20 +34,20 @@ export const Login: FC = () => {
     try {
       const response = await dispatch(loginUser(user)).unwrap();
       if (response) {
-        navigate("/menu", { replace: true });
+        navigate("/menu/principal", { replace: true });
       } else {
         dispatch(
           showMsg({
-            type: 'success',
-              msg: 'Proveedor asignado',
+            type: "success",
+            msg: "Inicie sesión",
           })
         );
       }
     } catch (error) {
       dispatch(
         showMsg({
-          type: 'success',
-            msg: 'Proveedor asignado',
+          type: "success",
+          msg: "Inicie sesión",
         })
       );
     }
@@ -74,14 +74,11 @@ export const Login: FC = () => {
             <p className="mt-4   leading-none text-gray-500">
               ¿No tiene una cuenta?{" "}
               <span
-                onClick={() => {
-                  navigate("/auth/register");
-                }}
+                onClick={() => navigate("/auth/register")}
                 tabIndex={0}
                 role="link"
                 aria-label="Sign up here"
-                className="cursor-pointer   leading-none
-                              underline"
+                className="cursor-pointer leading-none underline"
               >
                 {" "}
                 Registrarse
@@ -110,7 +107,7 @@ export const Login: FC = () => {
                 className="max-w-xs"
               />
             </div>
-            <div className="mt-6  w-full">
+            <div className="mt-6 w-full">
               <div className="relative flex h-11 items-center justify-center">
                 <Input
                   errorMessage={
@@ -159,8 +156,7 @@ export const Login: FC = () => {
                 disabled={!formikLogin.isValid || !formikLogin.dirty}
                 aria-label="login"
                 type="submit"
-                className="w-full bg-gradient-to-tl from-green-300 to-indigo-400 cursor-pointer py-4 uppercase mt-4 font-semibold
-               "
+                className="w-full bg-gradient-to-tl from-green-300 to-indigo-400 cursor-pointer py-4 uppercase mt-4 font-semibold "
                 onClick={handleSubmit}
               >
                 Entrar

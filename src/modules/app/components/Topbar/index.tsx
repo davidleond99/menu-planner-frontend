@@ -26,7 +26,6 @@ export const Topbar: FC<TopbarProps> = ({
           <div className="flex w-full items-center justify-end pl-8 mr-2">
             <Avatar />
           </div>
-
           <Icon
             onClick={() => {
               localStorage.removeItem("token");

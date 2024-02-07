@@ -30,7 +30,7 @@ export const RecipeForm = () => {
   });
   const { recipes } = useSelector(recipesSelector);
   const { recipeId } = useParams();
-  const [categoriasEIngredientes, setCategoriasEIngredientes] = useState<
+  const [categoriesIngredients, setCategoriesIngredients] = useState<
     { categoria: string; ingredientes: IGetIngredients[] }[]
   >([]);
 
@@ -72,8 +72,8 @@ export const RecipeForm = () => {
     } catch (error) {
       dispatch(
         showMsg({
-          type: "success",
-          msg: "Proveedor asignado",
+          type: "failure",
+          msg: "Error",
         })
       );
     }
@@ -89,7 +89,7 @@ export const RecipeForm = () => {
             (ingredient) => ingredient.category === value
           ),
         }));
-        setCategoriasEIngredientes(categorias);
+        setCategoriesIngredients(categorias);
       });
   }, [dispatch]);
 
@@ -97,7 +97,7 @@ export const RecipeForm = () => {
     void loadInitialData();
   }, [recipeId]);
 
-  function handleCreate() {
+  const handleCreate = () => {
     const ids = formikRecipe.values.ingredients.map(
       (ingredient) => ingredient.id
     );
@@ -110,12 +110,23 @@ export const RecipeForm = () => {
 
     try {
       dispatch(createRecipes(recipe));
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Receta creada",
+        })
+      );
     } catch (error) {
-      console.log(error);
+      dispatch(
+        showMsg({
+          type: "failure",
+          msg: "Error",
+        })
+      );
     }
-  }
+  };
 
-  function handleUpdate() {
+  const handleUpdate = () => {
     try {
       dispatch(
         updateRecipe({
@@ -129,10 +140,21 @@ export const RecipeForm = () => {
           },
         })
       );
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Receta actualizada",
+        })
+      );
     } catch (error) {
-      console.log(error);
+      dispatch(
+        showMsg({
+          type: "failure",
+          msg: "Error",
+        })
+      );
     }
-  }
+  };
 
   return (
     <form className="flex flex-col gap-4 p-4 m-8 border border-gray-300 rounded-lg">
@@ -141,21 +163,21 @@ export const RecipeForm = () => {
           className="border border-gray-400 rounded-large w-1/4 h-1/2"
           isRequired
           onBlur={formikRecipe.handleBlur}
-          errorMessage={
-            formikRecipe.touched.name ? formikRecipe.errors.name : ""
-          }
+          errorMessage={formikRecipe.touched.name && formikRecipe.errors.name}
           isInvalid={!!formikRecipe.errors.name && !!formikRecipe.touched.name}
           value={formikRecipe.values.name}
           onChange={(e) =>
             void formikRecipe.setFieldValue("name", e.target.value)
           }
           label="Nombre"
+          name="name"
           placeholder="Nombre de la receta"
           type="text"
         />
         <Textarea
           onBlur={formikRecipe.handleBlur}
           isRequired
+          name="instructions"
           errorMessage={
             formikRecipe.touched.instructions
               ? formikRecipe.errors.instructions
@@ -176,15 +198,15 @@ export const RecipeForm = () => {
         />
       </div>
       <div className="flex flex-row gap-2 items-center justify-start mt-4">
-        {categoriasEIngredientes.map((item, index) => (
+        {categoriesIngredients.map((item, index) => (
           <div key={index} className="w-full max-w-xl mr-4">
             <h3>{item.categoria}</h3>
             <Select
+              isRequired
               selectedKeys={formikRecipe?.values.ingredients
                 .filter((ingredient) => ingredient.category === item.categoria)
                 .map((ingredient) => ingredient.id.toString())}
               onBlur={formikRecipe.handleBlur}
-              isRequired
               onChange={async (e) => {
                 const selectedIngredients: string[] = e.target.value.split(`,`);
                 let newIngredients: IGetIngredients[] = [];
@@ -225,19 +247,17 @@ export const RecipeForm = () => {
           className="mr-2 border border-gray-300"
           color="danger"
           variant="light"
-          onClick={() => {
-            navigate(-1);
-          }}
+          onClick={() => navigate(-1)}
         >
           Cancelar
         </Button>
         <Button
           className="cursor-pointer"
           color="primary"
-          disabled={!formikRecipe.isValid}
+          isDisabled={!formikRecipe.isValid || !formikRecipe.dirty}
           onClick={handleClick}
         >
-          Guardar
+          {formikRecipe.values.id !== 0 ? "Actualizar" : "Guardar "}
         </Button>
       </div>
     </form>

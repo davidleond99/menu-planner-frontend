@@ -10,11 +10,13 @@ import {
 } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { useAppDispatch } from "../../../../shared/store";
-import { getMenus } from "../../application";
+import { getMenuByUserId } from "../../application";
 import { IGetMenusAll } from "../../types";
 import { IIngredient } from "../../../ingredients/types";
 import { Icon } from "../../../../shared/components/Icon";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
+import { authSelector } from "../../../auth/redux";
+import { useSelector } from "react-redux";
 
 export const MenuPrincipal = () => {
   const getDayOfWeek = (date: Date) => {
@@ -22,9 +24,12 @@ export const MenuPrincipal = () => {
     return new Intl.DateTimeFormat("es-ES", options).format(date);
   };
 
-  const viewShoppingList = (data: IGetMenusAll) => {
+  const { user } = useSelector(authSelector);
+  const viewShoppingList = (menu: IGetMenusAll) => {
+    setSelectedMenu(menu);
+
     const allIngredients: IIngredient[] = [];
-    data.recipes.forEach((recipe) => {
+    menu.recipes.forEach((recipe) => {
       recipe.ingredients.forEach((ingredient) => {
         const existingIngredient = allIngredients.find(
           (item) => item.id === ingredient.id
@@ -38,6 +43,7 @@ export const MenuPrincipal = () => {
   };
 
   const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedMenu, setSelectedMenu] = useState<IGetMenusAll>();
 
   function sumDaysToDate(dateString: string, days: number) {
     const dateObject = new Date(dateString);
@@ -51,7 +57,7 @@ export const MenuPrincipal = () => {
   const dispatch = useAppDispatch();
   const [menus, setMenus] = useState<IGetMenusAll[]>([]);
   useEffect(() => {
-    void dispatch(getMenus())
+    void dispatch(getMenuByUserId(user!.user.id))
       .unwrap()
       .then((data) => {
         setMenus(data);
@@ -61,7 +67,7 @@ export const MenuPrincipal = () => {
 
     const interval = setInterval(() => {
       setCurrentDate(new Date());
-    }, 1000);
+    }, 100000);
 
     return () => clearInterval(interval);
   }, []);
@@ -69,7 +75,7 @@ export const MenuPrincipal = () => {
   return (
     <div className="flex h-screen m-4">
       <div className="w-2/3 h-screen m-4">
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 mt-4">
           <Table aria-label="Example static collection table">
             <TableHeader>
               <TableColumn>Nombre</TableColumn>
@@ -122,12 +128,27 @@ export const MenuPrincipal = () => {
         </div>
       </div>
       <div className="border-large border-teal-200 w-1/3 h-auto m-9">
-        <div className="mt-4 flex justify-end content-end mr-4">
-          <p className="text-sm">
-            Día actual: {getDayOfWeek(currentDate)},{" "}
-            {currentDate.toLocaleDateString()}
-          </p>
-        </div>
+        {selectedMenu && (
+          <div className="mt-4 flex justify-between content-between mr-4">
+            <div className="flex flex-col">
+              <p className="text-sm ml-2">{selectedMenu?.name}</p>
+              <p className="text-xs ml-2">
+                Dia de inicio:{" "}
+                {new Date(selectedMenu!.dateStart).toDateString()}
+              </p>
+              <p className="text-xs ml-2">
+                Dia de fin:{" "}
+                {new Date(
+                  sumDaysToDate(selectedMenu!.dateStart, 6)
+                ).toDateString()}
+              </p>
+            </div>
+            <p className="text-sm">
+              Día actual: {getDayOfWeek(currentDate)},{" "}
+              {currentDate.toLocaleDateString()}
+            </p>
+          </div>
+        )}
         <div className="flex flex-row justify-center content-center">
           <p className="text-md font-semibold mt-2 text-xl">
             Lista de la compra

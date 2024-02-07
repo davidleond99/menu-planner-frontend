@@ -12,3 +12,9 @@ export interface User {
   name: string;
   user_name: string;
 }
+export interface ICreateUser {
+  id?: number;
+  name: string;
+  user_name: string;
+  password: string;
+}

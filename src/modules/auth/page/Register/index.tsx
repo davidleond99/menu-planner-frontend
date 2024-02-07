@@ -5,6 +5,9 @@ import { useNavigate } from "react-router-dom";
 import { RegisterSchema } from "../../utils";
 import { Button, Input } from "@nextui-org/react";
 import { Icon } from "../../../../shared/components";
+import { useAppDispatch } from "../../../../shared/store";
+import { createUser } from "../../redux";
+import { showMsg } from "../../../../shared/redux/message";
 
 interface IRegisterProps {
   containerclassname?: string;
@@ -32,13 +35,26 @@ export const Register: FC<IRegisterProps> = () => {
     onSubmit: () => {},
     validationSchema: RegisterSchema,
   });
+  const dispatch = useAppDispatch();
 
   const navigate = useNavigate();
   const [viewPassword, setViewPassword] = useState(true);
   const [viewConfirmPassword, setViewConfirmPassword] = useState(true);
 
   const handleSubmit = async () => {
-    return;
+    try {
+      await dispatch(
+        createUser({
+          name: formikRegister.values.name,
+          user_name: formikRegister.values.userName,
+          password: formikRegister.values.password,
+        })
+      );
+      dispatch(showMsg({ msg: "Creado", type: "success" }));
+      navigate("auth/login");
+    } catch (error) {
+      dispatch(showMsg({ msg: "error", type: "failure" }));
+    }
   };
 
   return (
@@ -62,17 +78,16 @@ export const Register: FC<IRegisterProps> = () => {
               tabIndex={0}
               role="link"
               aria-label="Sign up here"
-              className="cursor-pointer   
-                              underline"
+              className="cursor-pointer underline"
             >
               {" "}
               Autenticarse
             </span>
           </p>
 
-          <div className="flex flex-row ">
-            <div className="flex w-full flex-col">
-              <div className="mt-1 ">
+          <div className="flex flex-col ml-7">
+            <div className="flex w-full flex-col justify-start content-start">
+              <div className="mt-2">
                 <Input
                   label="Nombre"
                   errorMessage={
@@ -80,17 +95,21 @@ export const Register: FC<IRegisterProps> = () => {
                       ? formikRegister.errors.name
                       : ""
                   }
+                  isInvalid={
+                    !!formikRegister.errors.name &&
+                    !!formikRegister.touched.name
+                  }
                   value={formikRegister.values.name}
-                  aria-label="Introduzca su nombre"
+                  aria-label="Nombre"
                   required
+                  type="user"
                   name="name"
                   onBlur={formikRegister.handleBlur}
                   onChange={formikRegister.handleChange}
-                  className="mt-2 w-full  
-                                    py-3 pl-3    "
+                  className="max-w-xs mt-3"
                 />
               </div>
-              <div className="mt-4">
+              <div className="mt-2">
                 <Input
                   label="Nombre de usuario"
                   errorMessage={
@@ -98,120 +117,108 @@ export const Register: FC<IRegisterProps> = () => {
                       ? formikRegister.errors.userName
                       : ""
                   }
+                  isInvalid={
+                    !!formikRegister.errors.userName &&
+                    !!formikRegister.touched.userName
+                  }
                   value={formikRegister.values.userName}
-                  aria-label="Introduzca un nombre de usuario"
+                  aria-label="Nombre de usuario"
                   required
-                  type="text"
+                  type="user"
+                  name="userName"
                   onBlur={formikRegister.handleBlur}
                   onChange={formikRegister.handleChange}
-                  name="userName"
-                  className="mt-3 w-full py-3 pl-3"
+                  className="max-w-xs mt-3"
                 />
               </div>
-              <div className="mt-6">
-                <div className="mb-2 flex flex-row">
-                  <label className=" text-md">Contraseña</label>
-                  <p className="ml-2 text-red-600">*</p>
-                </div>
-                <div className="relative flex h-11 items-center justify-center">
-                  <input
+              <div className="w-full flex flex-col">
+                <div className=" h-11 items-center justify-center mb-4 mt-2">
+                  <Input
+                    errorMessage={
+                      formikRegister.touched.password
+                        ? formikRegister.errors.password
+                        : ""
+                    }
+                    isInvalid={
+                      !!formikRegister.errors.password &&
+                      !!formikRegister.touched.password
+                    }
+                    label="Contraseña"
                     value={formikRegister.values.password}
-                    aria-label="Introduzca la contraseña"
                     name="password"
+                    aria-label="Introduzca su contraseña"
                     onBlur={formikRegister.handleBlur}
                     onChange={formikRegister.handleChange}
                     required
-                    type={`${viewPassword ? "password" : "text"}`}
-                    className="mt-4 h-full w-full py-3 pl-3 focus:border focus:border-blue-700 focus:outline-none
-                  text-md font-normal dark:border-gray-200 dark:bg-gray-100 dark:text-gray-400 dark:focus:border-blue-700"
+                    placeholder="Introduzca su contraseña"
+                    endContent={
+                      <button
+                        className="focus:outline-none"
+                        type="button"
+                        onClick={() => setViewPassword(!viewPassword)}
+                      >
+                        {viewPassword ? (
+                          <Icon
+                            icon={faEyeLowVision}
+                            className=" text-default-400 pointer-events-none"
+                          />
+                        ) : (
+                          <Icon
+                            icon={faEye}
+                            className="text-default-400 pointer-events-none"
+                          />
+                        )}
+                      </button>
+                    }
+                    type={viewPassword ? "text" : "password"}
+                    className="max-w-xs mt-4"
                   />
-                  <div className="absolute right-0 mt-4 mr-3 cursor-pointer">
-                    <Icon
-                      onClick={() => {
-                        setViewPassword(!viewPassword);
-                      }}
-                      icon={viewPassword ? faEye : faEyeLowVision}
-                    />
-                  </div>
                 </div>
-                {formikRegister.errors.password &&
-                formikRegister.touched.password ? (
-                  <div className="mt-3 flex items-center justify-between text-red-400">
-                    <p className="text-xs leading-3 tracking-normal">
-                      {formikRegister.errors.password}
-                    </p>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="icon icon-tabler icon-tabler-circle-x"
-                      width={20}
-                      height={20}
-                      viewBox="0 0 24 24"
-                      strokeWidth="1.5"
-                      stroke="currentColor"
-                      fill="none"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <path stroke="none" d="M0 0h24v24H0z" />
-                      <circle cx={12} cy={12} r={9} />
-                      <path d="M10 10l4 4m0 -4l-4 4" />
-                    </svg>
-                  </div>
-                ) : (
-                  ""
-                )}
               </div>
 
-              <div className="mt-6 flex flex-row">
-                <label className="mb-2 text-md   ">Confirmar contraseña</label>
-                <p className="ml-2 text-red-600">*</p>
-              </div>
-              <div className="relative flex h-11 items-center justify-center">
-                <input
+              <div className="items-center justify-center mt-4">
+                <Input
+                  errorMessage={
+                    formikRegister.touched.confirmPassword
+                      ? formikRegister.errors.confirmPassword
+                      : ""
+                  }
+                  isInvalid={
+                    !!formikRegister.errors.confirmPassword &&
+                    !!formikRegister.touched.confirmPassword
+                  }
+                  label="Confirmar contraseña"
                   value={formikRegister.values.confirmPassword}
                   name="confirmPassword"
                   onBlur={formikRegister.handleBlur}
                   onChange={formikRegister.handleChange}
                   required
-                  type={`${viewConfirmPassword ? "password" : "text"}`}
-                  className="mt-4 h-full w-full py-3 pl-3 focus:border focus:border-blue-700 focus:outline-none
-                  text-md font-normal dark:border-gray-200 dark:bg-gray-100 dark:text-gray-400 dark:focus:border-blue-700"
+                  placeholder="Confirme su contraseña"
+                  endContent={
+                    <button
+                      className="focus:outline-none"
+                      type="button"
+                      onClick={() => {
+                        setViewConfirmPassword(!viewConfirmPassword);
+                      }}
+                    >
+                      {viewConfirmPassword ? (
+                        <Icon
+                          icon={faEyeLowVision}
+                          className=" text-default-400 pointer-events-none"
+                        />
+                      ) : (
+                        <Icon
+                          icon={faEye}
+                          className="text-default-400 pointer-events-none"
+                        />
+                      )}
+                    </button>
+                  }
+                  type={viewConfirmPassword ? "text" : "password"}
+                  className="max-w-xs mt-4"
                 />
-                <div className="absolute right-0 mt-4 mr-3 cursor-pointer">
-                  <Icon
-                    onClick={() => {
-                      setViewConfirmPassword(!viewConfirmPassword);
-                    }}
-                    icon={viewConfirmPassword ? faEye : faEyeLowVision}
-                  />
-                </div>
               </div>
-              {formikRegister.errors.confirmPassword &&
-              formikRegister.touched.confirmPassword ? (
-                <div className="mt-3 flex items-center justify-between text-red-400">
-                  <p className="text-xs leading-3 tracking-normal">
-                    {formikRegister.errors.confirmPassword}
-                  </p>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="icon icon-tabler icon-tabler-circle-x"
-                    width={20}
-                    height={20}
-                    viewBox="0 0 24 24"
-                    strokeWidth="1.5"
-                    stroke="currentColor"
-                    fill="none"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path stroke="none" d="M0 0h24v24H0z" />
-                    <circle cx={12} cy={12} r={9} />
-                    <path d="M10 10l4 4m0 -4l-4 4" />
-                  </svg>
-                </div>
-              ) : (
-                ""
-              )}
             </div>
           </div>
 
@@ -221,7 +228,8 @@ export const Register: FC<IRegisterProps> = () => {
               aria-label="create"
               onClick={handleSubmit}
               color="primary"
-              className="w-full  py-4 uppercase"
+              className="w-full bg-gradient-to-tl text-black from-green-300 to-indigo-400 cursor-pointer py-4 uppercase font-semibold
+              "
             >
               Registrarse
             </Button>

@@ -1,7 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import ingredientServices from "../../services";
 import { ICreateIngredient, IGetIngredients } from "../../types";
-import { showMsg } from "../../../../shared/redux/message";
 
 export const getIngredients = createAsyncThunk(
   "get/ingredients",
@@ -17,7 +16,7 @@ export const getIngredients = createAsyncThunk(
 
 export const getIngredientById = createAsyncThunk(
   "get/ingredientId",
-  async (id: number, { dispatch, fulfillWithValue, rejectWithValue }) => {
+  async (id: number, { fulfillWithValue, rejectWithValue }) => {
     try {
       const resp = await ingredientServices.getItemById<
         IGetIngredients,
@@ -25,46 +24,25 @@ export const getIngredientById = createAsyncThunk(
       >(id);
       return fulfillWithValue<IGetIngredients>(resp.data);
     } catch (error) {
-      dispatch(
-        showMsg({
-          type: "success",
-          msg: "Proveedor asignado",
-        })
-      );
       return rejectWithValue(error);
     }
   }
 );
 
 export const createIngredient = createAsyncThunk(
-  "post/ingredients",
-  async (
-    data: ICreateIngredient,
-    { dispatch, fulfillWithValue, rejectWithValue }
-  ) => {
+  "post/ingredient",
+  async (data: ICreateIngredient, { fulfillWithValue, rejectWithValue }) => {
     try {
       const resp = await ingredientServices.createItem<IGetIngredients>(data);
-      dispatch(
-        showMsg({
-          type: "success",
-          msg: "Proveedor asignado",
-        })
-      );
       return fulfillWithValue(resp.data);
     } catch (error) {
-      dispatch(
-        showMsg({
-          type: "success",
-          msg: "Proveedor asignado",
-        })
-      );
       return rejectWithValue(error);
     }
   }
 );
 
 export const updateIngredient = createAsyncThunk(
-  "patch/ingredient",
+  "put/ingredient",
   async (
     { id, data }: { id: number; data: ICreateIngredient },
     { fulfillWithValue, rejectWithValue }
