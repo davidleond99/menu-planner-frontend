@@ -9,58 +9,65 @@ import { AuthRouter } from "../../auth/router";
 import IngredientsRouter from "../../ingredients/router";
 import { MainLayout } from "../../../shared/layouts";
 import RecipeRouter from "../../recipe/router";
+import { appSelector } from "../../../shared/redux/message";
+import { Message } from "../../../shared/components/Message";
 
 export const AppRouter: FC = (): ReactElement => {
+  const { showMsg } = useSelector(appSelector);
+
   const { user } = useSelector(authSelector);
 
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path="/auth/*"
-          element={
-            <Suspense>
-              <PublicRoute>
-                <AuthRouter />
-              </PublicRoute>
-            </Suspense>
-          }
-        />
-        <Route path="/" element={<MainLayout />}>
+    <>
+      <Message show={showMsg} />
+      <BrowserRouter>
+        <Routes>
           <Route
-            path="menu/*"
+            path="/auth/*"
             element={
-              <PrivateRoute isAllowed={!!user}>
-                <Suspense>
-                  <MenuRouter />
-                </Suspense>
-              </PrivateRoute>
+              <Suspense>
+                <PublicRoute>
+                  <AuthRouter />
+                </PublicRoute>
+              </Suspense>
             }
           />
-          <Route
-            path="recipe/*"
-            element={
-              <PrivateRoute isAllowed={!!user}>
-                <Suspense>
-                  <RecipeRouter />
-                </Suspense>
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="ingredients/*"
-            element={
-              <PrivateRoute isAllowed={!!user}>
-                <Suspense>
-                  <IngredientsRouter />
-                </Suspense>
-              </PrivateRoute>
-            }
-          />
-        </Route>
-        <Route path="/" element={<Navigate replace to={"/auth/login"} />} />
-      </Routes>
-    </BrowserRouter>
+          <Route path="/" element={<MainLayout />}>
+            <Route
+              path="menu/*"
+              element={
+                <PrivateRoute isAllowed={!!user}>
+                  <Suspense>
+                    <MenuRouter />
+                  </Suspense>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="recipe/*"
+              element={
+                <PrivateRoute isAllowed={!!user}>
+                  <Suspense>
+                    <RecipeRouter />
+                  </Suspense>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="ingredients/*"
+              element={
+                <PrivateRoute isAllowed={!!user}>
+                  <Suspense>
+                    <IngredientsRouter />
+                  </Suspense>
+                </PrivateRoute>
+              }
+            />
+          </Route>
+          <Route path="/" element={<Navigate replace to={"/auth/login"} />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
 };
 export default AppRouter;
