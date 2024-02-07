@@ -24,16 +24,15 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "../../../../shared/components";
-import { showMessage } from "../../../../shared/redux/message";
 import { useNavigate } from "react-router-dom";
 import { getMenus, deleteMenu } from "../../../menu/application";
 import { IGetMenus } from "../../../menu/types";
+import { showMsg } from "../../../../shared/redux/message";
 
 export const MenuList = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [viewMenus, setViewMenus] = useState<IGetMenus>();
 
-  
   const [menus, setMenus] = useState<IGetMenus[]>([]);
   const navigate = useNavigate();
 
@@ -52,9 +51,9 @@ export const MenuList = () => {
       setMenus((prevMenus) => prevMenus.filter((menu) => menu.id !== menuId));
     } catch (error) {
       dispatch(
-        showMessage({
-          severity: "error",
-          summary: "Error deleting Menu",
+        showMsg({
+          type: 'success',
+            msg: 'Proveedor asignado',
         })
       );
     }
@@ -93,10 +92,10 @@ export const MenuList = () => {
                     {menu.name}
                   </TableCell>
                   <TableCell className=" justify-start content-start">
-                    {menu.dateStart.toString()}
+                    {new Date(menu.dateStart).toDateString()}
                   </TableCell>
                   <TableCell className=" justify-start content-start">
-                    {sumDaysToDate(menu.dateStart, 6)}
+                    {new Date(sumDaysToDate(menu.dateStart, 6)).toDateString()}
                   </TableCell>
 
                   <TableCell>
@@ -105,9 +104,7 @@ export const MenuList = () => {
                         <Button
                           aria-label="Ver menu"
                           isIconOnly
-                          onClick={() => {
-                            console.log(menu);
-                          }}
+                          onClick={() => {}}
                           onPress={() => {
                             onOpen();
                             setViewMenus(menu);
@@ -121,7 +118,9 @@ export const MenuList = () => {
                         <Button
                           isIconOnly
                           aria-label="Editar"
-                          onPress={() => {}}
+                          onClick={() => {
+                            navigate(`edit/${menu.id}`);
+                          }}
                           size="sm"
                           className="w-1/4 bg-green-400"
                           endContent={<Icon icon={faEdit} />}

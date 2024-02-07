@@ -1,39 +1,27 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IMessage, IShowMessage } from '../../../modules/app/types';
+import { createSlice } from '@reduxjs/toolkit';
+import { IAppState } from '../../interfaces';
 import { RootState } from '../../store';
+import { reducers } from '../reducers';
 
 
-const initialState: IMessage = {
-  detail: '',
-  life: 2500,
-  severity: 'success',
-  summary: '',
-  show: false,
+
+const initialState: IAppState = {
+  loading: false,
+  lang: localStorage.getItem('lang') || 'en',
+  showMsg: false,
+  typeMsg: 'info',
+  message: '',
 };
 
-const messageSlice = createSlice({
-  name: 'message',
+const appSlice = createSlice({
+  name: 'app',
   initialState,
-  reducers: {
-    showMessage: (state: IMessage, action: PayloadAction<IShowMessage>) => {
-      return {
-        ...state,
-        ...action.payload,
-        summary: action.payload.summary ? action.payload.summary : 'error',
-        show: true,
-      };
-    },
-    hideMessage: (state: IMessage) => {
-      return {
-        ...state,
-        show: false,
-      };
-    },
-  },
+  reducers,
 });
 
-export const { showMessage, hideMessage } = messageSlice.actions;
+export const { showLoading, hideLoading, changeLang, hideMsg, showMsg } =
+  appSlice.actions;
 
-export const messageReducer = messageSlice.reducer;
-export const messageSelector = (state: RootState): IMessage => state.message;
-export default messageReducer;
+export const appReducer = appSlice.reducer;
+
+export const appSelector = (state: RootState) => state.app;

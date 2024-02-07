@@ -14,8 +14,8 @@ import { useAppDispatch } from "../../../../shared/store";
 import { IGetIngredients } from "../../types";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "../../../../shared/components";
-import { showMessage } from "../../../../shared/redux/message";
 import { useNavigate } from "react-router-dom";
+import { showMsg } from "../../../../shared/redux/message";
 
 export const IngredientsList = () => {
   const [ingredients, setIngredients] = useState<IGetIngredients[]>([]);
@@ -38,9 +38,9 @@ export const IngredientsList = () => {
       );
     } catch (error) {
       dispatch(
-        showMessage({
-          severity: "error",
-          summary: "Error deleting ingredient:",
+        showMsg({
+          type: 'success',
+            msg: 'Proveedor asignado',
         })
       );
     }

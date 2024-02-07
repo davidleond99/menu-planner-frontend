@@ -11,6 +11,7 @@ export const MenuRouter: FC = (): ReactElement => {
       <Route path="menu" element={<MenuList />} />
       <Route path="/principal" element={<MenuPrincipal />} />
       <Route index path="/new" element={<MenuForm />} />
+      <Route index path="/edit/:menuId" element={<MenuForm />} />
       <Route path="*" element={<Navigate replace to="menu" />} />
     </Routes>
   );

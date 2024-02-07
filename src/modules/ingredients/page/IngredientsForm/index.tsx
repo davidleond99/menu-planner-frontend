@@ -13,7 +13,7 @@ import { IngredientSchema } from "../../utils";
 import { useAppDispatch } from "../../../../shared/store";
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { showMessage } from "../../../../shared/redux/message";
+import { showMsg } from "../../../../shared/redux/message";
 
 export const IngredientsForm = () => {
   const formikIngredient = useFormik<ICreateIngredient>({
@@ -54,7 +54,7 @@ export const IngredientsForm = () => {
         unity: "",
       },
     });
-    navigate("-1");
+    navigate(-1);
   }
   const handleCreate = () => {
     dispatch(
@@ -70,6 +70,12 @@ export const IngredientsForm = () => {
         formikIngredient.resetForm();
       })
       .catch(console.log);
+    dispatch(
+      showMsg({
+        type: "success",
+        msg: "Proveedor asignado",
+      })
+    );
   };
 
   const handleUpdate = () => {
@@ -126,7 +132,12 @@ export const IngredientsForm = () => {
         });
       }
     } catch (error) {
-      dispatch(showMessage({ summary: "Error", severity: "error" }));
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Proveedor asignado",
+        })
+      );
     }
   };
 
@@ -160,7 +171,6 @@ export const IngredientsForm = () => {
         isRequired
         selectedKeys={[formikIngredient.values.category]}
         onChange={(e) => {
-          console.log(e);
           void formikIngredient.setFieldValue("category", e.target.value);
         }}
         errorMessage={

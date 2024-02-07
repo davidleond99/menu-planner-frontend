@@ -14,8 +14,8 @@ import { useFormik } from "formik";
 import { ICreateRecipe, IGetRecipes } from "../../types";
 import { RecipeSchema } from "../../utils";
 import { useNavigate, useParams } from "react-router-dom";
-import { showMessage } from "../../../../shared/redux/message";
 import { useSelector } from "react-redux";
+import { showMsg } from "../../../../shared/redux/message";
 
 export const RecipeForm = () => {
   const formikRecipe = useFormik<IGetRecipes>({
@@ -28,8 +28,6 @@ export const RecipeForm = () => {
     onSubmit: async () => {},
     validationSchema: RecipeSchema,
   });
-  const [ingredientsSelecteds, setIngredientsSelecteds] =
-    useState<IGetRecipes>();
   const { recipes } = useSelector(recipesSelector);
   const { recipeId } = useParams();
   const [categoriasEIngredientes, setCategoriasEIngredientes] = useState<
@@ -39,20 +37,27 @@ export const RecipeForm = () => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
+  const handleClick = () => {
+    if (recipeId) {
+      handleUpdate();
+    } else {
+      handleCreate();
+    }
+    navigate(-1);
+  };
+
   const loadInitialData = async () => {
     try {
       if (recipeId) {
-        const recipe1 = await dispatch(
+        const recipeGet = await dispatch(
           getRecipeById(parseInt(recipeId))
         ).unwrap();
 
-        if (recipe1) {
-          console.log(recipe1);
+        if (recipeGet) {
           const recipeu = recipes.find((recipe) => {
-            return recipe.id === recipe1.id;
+            return recipe.id === recipeGet.id;
           });
           if (recipeu) {
-            console.log(recipeu);
             formikRecipe.resetForm({
               values: {
                 id: recipeu.id,
@@ -65,7 +70,12 @@ export const RecipeForm = () => {
         }
       }
     } catch (error) {
-      dispatch(showMessage({ summary: "Error", severity: "error" }));
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Proveedor asignado",
+        })
+      );
     }
   };
 
@@ -98,7 +108,30 @@ export const RecipeForm = () => {
       ingredientsId: ids,
     };
 
-    dispatch(createRecipes(recipe));
+    try {
+      dispatch(createRecipes(recipe));
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  function handleUpdate() {
+    try {
+      dispatch(
+        updateRecipe({
+          id: formikRecipe.values.id!,
+          data: {
+            name: formikRecipe.values.name,
+            instructions: formikRecipe.values.instructions,
+            ingredientsId: formikRecipe.values.ingredients.map(
+              (ingredient) => ingredient.id
+            ),
+          },
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   return (
@@ -147,21 +180,30 @@ export const RecipeForm = () => {
           <div key={index} className="w-full max-w-xl mr-4">
             <h3>{item.categoria}</h3>
             <Select
-              selectedKeys={(() => {
-                return ingredientsSelecteds?.ingredients
-                  .filter(
-                    (ingredient) => ingredient.category === item.categoria
-                  )
-                  .map((ingredient) => ingredient.id.toString());
-              })()}
+              selectedKeys={formikRecipe?.values.ingredients
+                .filter((ingredient) => ingredient.category === item.categoria)
+                .map((ingredient) => ingredient.id.toString())}
               onBlur={formikRecipe.handleBlur}
               isRequired
               onChange={async (e) => {
-                await void formikRecipe.setFieldValue(
-                  "ingredients",
-                  e.target.value
-                );
-                setIngredientsSelecteds(formikRecipe.values);
+                const selectedIngredients: string[] = e.target.value.split(`,`);
+                let newIngredients: IGetIngredients[] = [];
+
+                selectedIngredients.forEach((selectedIngredient) => {
+                  const findedIngredient: IGetIngredients | undefined =
+                    item.ingredientes.find(
+                      (ingredient) =>
+                        ingredient.id?.toString() === selectedIngredient
+                    );
+                  if (findedIngredient) newIngredients.push(findedIngredient);
+                });
+                newIngredients = [
+                  ...newIngredients,
+                  ...formikRecipe.values.ingredients.filter(
+                    (ingredient) => ingredient.category !== item.categoria
+                  ),
+                ];
+                await formikRecipe.setFieldValue("ingredients", newIngredients);
               }}
               selectionMode="multiple"
               className="border border-gray-300 rounded-large"
@@ -184,7 +226,7 @@ export const RecipeForm = () => {
           color="danger"
           variant="light"
           onClick={() => {
-            navigate("-1");
+            navigate(-1);
           }}
         >
           Cancelar
@@ -193,25 +235,7 @@ export const RecipeForm = () => {
           className="cursor-pointer"
           color="primary"
           disabled={!formikRecipe.isValid}
-          onClick={() => {
-            if (recipeId) {
-              console.log(formikRecipe.values);
-              dispatch(
-                updateRecipe({
-                  id: formikRecipe.values.id!,
-                  data: {
-                    name: formikRecipe.values.name,
-                    instructions: formikRecipe.values.instructions,
-                    ingredientsId: formikRecipe.values.ingredients.map(
-                      (ingredient) => ingredient.id
-                    ),
-                  },
-                })
-              );
-            } else {
-              handleCreate();
-            }
-          }}
+          onClick={handleClick}
         >
           Guardar
         </Button>

@@ -14,6 +14,18 @@ export const getMenus = createAsyncThunk(
   }
 );
 
+export const getMenuById = createAsyncThunk(
+  "get/menuById",
+  async (id: number, { fulfillWithValue, rejectWithValue }) => {
+    try {
+      const resp = await menuService.getItemById<IGetMenus, number>(id);
+      return fulfillWithValue<IGetMenus>(resp.data);
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 export const createMenus = createAsyncThunk(
   "post/menu",
   async (data: ICreateMenu, { fulfillWithValue, rejectWithValue }) => {

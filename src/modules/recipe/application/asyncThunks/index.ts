@@ -39,7 +39,7 @@ export const createRecipes = createAsyncThunk(
 );
 
 export const updateRecipe = createAsyncThunk(
-  "patch/recipe",
+  "put/recipe",
   async (
     { id, data }: { id: number; data: ICreateRecipe },
     { fulfillWithValue, rejectWithValue }
@@ -56,11 +56,11 @@ export const updateRecipe = createAsyncThunk(
   }
 );
 
-export const deleteRecipes = createAsyncThunk(
-  "delete/recipes",
-  async (recipeName: string, { fulfillWithValue, rejectWithValue }) => {
+export const deleteRecipe = createAsyncThunk(
+  "delete/recipe",
+  async (recipeId: number, { fulfillWithValue, rejectWithValue }) => {
     try {
-      const resp = await recipeService.delete(`${recipeName}`);
+      const resp = await recipeService.delete(recipeId);
       return fulfillWithValue(resp);
     } catch (error) {
       return rejectWithValue([]);

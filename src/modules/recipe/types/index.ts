@@ -19,6 +19,12 @@ export interface IRecipe {
   instructions: string;
   ingredientsId: number[];
 }
+export interface IRecipeAll {
+  id: number;
+  name: string;
+  instructions: string;
+  ingredients: IIngredient[];
+}
 
 export interface ICreateRecipe {
   id?: number;

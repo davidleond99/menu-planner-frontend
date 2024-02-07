@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import ingredientServices from "../../services";
 import { ICreateIngredient, IGetIngredients } from "../../types";
-import { showMessage } from "../../../../shared/redux/message";
+import { showMsg } from "../../../../shared/redux/message";
 
 export const getIngredients = createAsyncThunk(
   "get/ingredients",
@@ -26,7 +26,10 @@ export const getIngredientById = createAsyncThunk(
       return fulfillWithValue<IGetIngredients>(resp.data);
     } catch (error) {
       dispatch(
-        showMessage({ severity: "error", summary: "Ingrediente repetido" })
+        showMsg({
+          type: "success",
+          msg: "Proveedor asignado",
+        })
       );
       return rejectWithValue(error);
     }
@@ -42,15 +45,18 @@ export const createIngredient = createAsyncThunk(
     try {
       const resp = await ingredientServices.createItem<IGetIngredients>(data);
       dispatch(
-        showMessage({
-          severity: "success",
-          summary: "Ingrediente Creado",
+        showMsg({
+          type: "success",
+          msg: "Proveedor asignado",
         })
       );
       return fulfillWithValue(resp.data);
     } catch (error) {
       dispatch(
-        showMessage({ severity: "error", summary: "Ingrediente repetido" })
+        showMsg({
+          type: "success",
+          msg: "Proveedor asignado",
+        })
       );
       return rejectWithValue(error);
     }

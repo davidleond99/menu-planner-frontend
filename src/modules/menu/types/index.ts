@@ -1,4 +1,4 @@
-import { IRecipe } from "../../recipe/types";
+import { IRecipeAll } from "../../recipe/types";
 
 export interface IMenuState {
   menus: IGetMenus[];
@@ -12,7 +12,16 @@ export interface IGetMenus {
   name: string;
   dateStart: string;
   dateEnd: string;
-  recipes: IRecipe[];
+  recipes: IRecipeAll[];
+}
+
+export interface IGetMenusAll {
+  id: number;
+  userId: number;
+  name: string;
+  dateStart: string;
+  dateEnd: string;
+  recipes: IRecipeAll[];
 }
 
 export interface IMenu {

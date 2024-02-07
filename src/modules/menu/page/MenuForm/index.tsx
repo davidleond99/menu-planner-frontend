@@ -1,7 +1,7 @@
 import { Input, Button, Select, SelectItem } from "@nextui-org/react";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { MenuSchema } from "../../utils";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -9,9 +9,10 @@ import { ICreateMenu } from "../../types";
 import { getRecipes } from "../../../recipe/application";
 import { IGetRecipes } from "../../../recipe/types";
 import { useAppDispatch } from "../../../../shared/store";
-import { createMenus } from "../../application";
+import { createMenus, getMenuById, updateMenu } from "../../application";
 import { useSelector } from "react-redux";
 import { authSelector } from "../../../auth/redux";
+import { showMsg } from "../../../../shared/redux/message";
 
 export const MenuForm = () => {
   const formikMenu = useFormik<ICreateMenu>({
@@ -26,6 +27,8 @@ export const MenuForm = () => {
     validationSchema: MenuSchema,
   });
 
+  const { menuId } = useParams();
+
   const { user } = useSelector(authSelector);
   const [recipes, setRecipes] = useState<IGetRecipes[]>([]);
   const [recipesid, setRecipesid] = useState<number[]>([]);
@@ -36,27 +39,68 @@ export const MenuForm = () => {
   const dispatch = useAppDispatch();
 
   const handleCreate = () => {
-    dispatch(
-      createMenus({
-        name: formikMenu.values.name,
-        userId: user!.user.id,
-        dateStart: selectedDate!.toString(),
-        recipesId: recipesid,
-      })
-    );
+    try {
+      dispatch(
+        createMenus({
+          name: formikMenu.values.name,
+          userId: user!.user.id,
+          dateStart: selectedDate!.toString(),
+          recipesId: recipesid,
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
-  // function handleUpdate() {
-  // dispatch(
-  //   updateRecipe({
-  //     id: formikRecipe.values.id!,
-  //     data: {
-  //       name: formikRecipe.values.name,
-  //       instructions: formikRecipe.values.instructions,
-  //     },
-  //   })
-  // );
-  // }
+  function handleUpdate() {
+    try {
+      dispatch(
+        updateMenu({
+          id: parseInt(menuId!),
+          data: {
+            userId: user!.user.id,
+            name: formikMenu.values.name,
+            dateStart: formikMenu.values.dateStart,
+            recipesId: formikMenu.values.recipesId,
+          },
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const loadInitialData = async () => {
+    try {
+      if (menuId) {
+        const menu = await dispatch(getMenuById(parseInt(menuId))).unwrap();
+        if (menu) {
+          formikMenu.resetForm({
+            values: {
+              id: menu.id,
+              name: menu.name,
+              userId: user!.user.id,
+              dateStart: menu.dateStart,
+              recipesId: menu.recipes?.map((recipe) => recipe.id) ?? [],
+            },
+          });
+          setSelectedDate(new Date(menu.dateStart));
+        }
+      }
+    } catch (error) {
+      dispatch(
+        showMsg({
+          type: "success",
+          msg: "Proveedor asignado",
+        })
+      );
+    }
+  };
+
+  useEffect(() => {
+    void loadInitialData();
+  }, [menuId]);
 
   useEffect(() => {
     void dispatch(getRecipes())
@@ -65,6 +109,15 @@ export const MenuForm = () => {
         setRecipes(data);
       });
   }, []);
+
+  const handleClick = () => {
+    if (menuId) {
+      handleUpdate();
+    } else {
+      handleCreate();
+    }
+    navigate(-1);
+  };
 
   return (
     <form className="flex flex-col gap-4 p-4 m-8 border border-gray-300 rounded-lg w-1/2">
@@ -75,7 +128,7 @@ export const MenuForm = () => {
           name="name"
           onBlur={formikMenu.handleBlur}
           errorMessage={formikMenu.touched.name && formikMenu.errors.name}
-          isInvalid={!formikMenu.errors.name && !formikMenu.touched.name}
+          isInvalid={!!formikMenu.errors.name && !!formikMenu.touched.name}
           value={formikMenu.values.name}
           onChange={formikMenu.handleChange}
           label="Nombre"
@@ -88,7 +141,7 @@ export const MenuForm = () => {
           selected={selectedDate}
           onChange={(date: Date) => {
             setSelectedDate(date);
-            formikMenu.handleChange;
+            formikMenu.setFieldValue("dateStart", date.toString());
           }}
           className="border border-gray-400 rounded-large p-2"
           placeholderText="Fecha de inicio"
@@ -110,11 +163,17 @@ export const MenuForm = () => {
           selectionMode="multiple"
           onBlur={formikMenu.handleBlur}
           isRequired
-          selectedKeys={(() => {
-            return recipes.map((recipe) => recipe.id.toString());
-          })()}
+          selectedKeys={formikMenu.values.recipesId.map((recipe) =>
+            recipe.toString()
+          )}
           onChange={(e) => {
-            void formikMenu.setFieldValue("recipesId", e.target.value);
+            void formikMenu.setFieldValue(
+              "recipesId",
+              e.target.value
+                .split(",")
+                .filter((v) => v)
+                .map((value) => parseInt(value))
+            );
             setRecipesid([...recipesid, parseInt(e.target.value)]);
           }}
           errorMessage={
@@ -148,16 +207,8 @@ export const MenuForm = () => {
         <Button
           className="cursor-pointer"
           color="primary"
-          isDisabled={!formikMenu.errors.name && !formikMenu.touched.name}
-          onClick={() => {
-            console.log("aki");
-            // if (formikMenu.values.id !== 0) {
-            //   console.log(formikMenu.values);
-            //   handleUpdate;
-            // } else {
-            handleCreate();
-            // }
-          }}
+          // isDisabled={!formikMenu.isValid}
+          onClick={handleClick}
         >
           Guardar
         </Button>

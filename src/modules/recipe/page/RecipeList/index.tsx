@@ -24,10 +24,10 @@ import {
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { Icon } from "../../../../shared/components";
-import { showMessage } from "../../../../shared/redux/message";
 import { IGetRecipes } from "../../types";
-import { deleteRecipes, getRecipes } from "../../application";
+import { deleteRecipe, getRecipes } from "../../application";
 import { useNavigate } from "react-router-dom";
+import { showMsg } from "../../../../shared/redux/message";
 
 export const RecipeList = () => {
   const [recipes, setRecipes] = useState<IGetRecipes[]>([]);
@@ -44,17 +44,18 @@ export const RecipeList = () => {
       });
   }, []);
 
-  const handleDelete = async (recipeNmae: string) => {
+  const handleDelete = async (recipeId: number) => {
     try {
-      await dispatch(deleteRecipes(recipeNmae));
+      console.log(recipeId)
+      await dispatch(deleteRecipe(recipeId));
       setRecipes((prevRecipes) =>
-        prevRecipes.filter((recipe) => recipe.name !== recipeNmae)
+        prevRecipes.filter((recipe) => recipe.id !== recipeId)
       );
     } catch (error) {
       dispatch(
-        showMessage({
-          severity: "error",
-          summary: "Error deleting recipe",
+        showMsg({
+          type: 'success',
+            msg: 'Proveedor asignado',
         })
       );
     }
@@ -95,9 +96,7 @@ export const RecipeList = () => {
                         <Button
                           aria-label="Ver ingredientes"
                           isIconOnly
-                          onClick={() => {
-                            console.log(recipe);
-                          }}
+                          onClick={() => {}}
                           onPress={() => {
                             onOpen();
                             setViewRecipes(recipe);
@@ -126,7 +125,7 @@ export const RecipeList = () => {
                           isIconOnly
                           size="sm"
                           onClick={() => {
-                            handleDelete(recipe.name);
+                            handleDelete(recipe.id);
                           }}
                           color="danger"
                           endContent={<Icon icon={faTrash} />}

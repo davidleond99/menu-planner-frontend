@@ -8,8 +8,8 @@ import { LoginSchema } from "../../utils";
 import { Button, Input } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { Icon } from "../../../../shared/components";
-import { showMessage } from "../../../../shared/redux/message";
 import { useAppDispatch } from "../../../../shared/store";
+import { showMsg } from "../../../../shared/redux/message";
 
 export const Login: FC = () => {
   const formikLogin = useFormik<IAuthRequest>({
@@ -37,17 +37,17 @@ export const Login: FC = () => {
         navigate("/menu", { replace: true });
       } else {
         dispatch(
-          showMessage({
-            severity: "error",
-            summary: "Credenciales invalidas",
+          showMsg({
+            type: 'success',
+              msg: 'Proveedor asignado',
           })
         );
       }
     } catch (error) {
       dispatch(
-        showMessage({
-          severity: "error",
-          summary: "Credenciales invalidas",
+        showMsg({
+          type: 'success',
+            msg: 'Proveedor asignado',
         })
       );
     }
