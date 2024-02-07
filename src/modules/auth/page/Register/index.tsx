@@ -50,7 +50,7 @@ export const Register: FC<IRegisterProps> = () => {
           password: formikRegister.values.password,
         })
       );
-      dispatch(showMsg({ msg: "Creado", type: "success" }));
+      dispatch(showMsg({ msg: "Usuario Creado", type: "success" }));
       navigate("auth/login");
     } catch (error) {
       dispatch(showMsg({ msg: "error", type: "failure" }));

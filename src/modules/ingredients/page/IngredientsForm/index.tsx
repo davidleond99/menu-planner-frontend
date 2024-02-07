@@ -175,6 +175,7 @@ export const IngredientsForm = () => {
         name="name"
         onBlur={formikIngredient.handleBlur}
         isRequired
+        aria-label="Nombre"
         errorMessage={
           formikIngredient.touched.name ? formikIngredient.errors.name : ""
         }
@@ -185,7 +186,7 @@ export const IngredientsForm = () => {
         onChange={formikIngredient.handleChange}
         label="Nombre"
         placeholder="Nombre del ingrediente"
-        type="text"
+        type="name"
       />
       <Select
         className="border border-gray-300 rounded-large w-1/2"

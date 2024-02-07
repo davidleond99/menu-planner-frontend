@@ -87,7 +87,7 @@ export const Login: FC = () => {
 
             <div className="mt-4 w-full">
               <Input
-                label="User"
+                label="Nombre de usuario"
                 errorMessage={
                   formikLogin.touched.user_name
                     ? formikLogin.errors.user_name

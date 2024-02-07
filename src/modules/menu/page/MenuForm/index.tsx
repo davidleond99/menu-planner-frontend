@@ -155,7 +155,7 @@ export const MenuForm = () => {
           onChange={formikMenu.handleChange}
           label="Nombre"
           placeholder="Nombre del menu"
-          type="text"
+          type="name"
         />
         <DatePicker
           name="dateStart"
@@ -163,7 +163,7 @@ export const MenuForm = () => {
           selected={selectedDate}
           onChange={(date: Date) => {
             setSelectedDate(date);
-            formikMenu.setFieldValue("dateStart", date.toString());
+            date && formikMenu.setFieldValue("dateStart", date.toString());
           }}
           className="border border-gray-400 rounded-large p-2"
           placeholderText="Fecha de inicio"

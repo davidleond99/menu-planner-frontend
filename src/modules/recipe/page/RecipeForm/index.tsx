@@ -172,7 +172,7 @@ export const RecipeForm = () => {
           label="Nombre"
           name="name"
           placeholder="Nombre de la receta"
-          type="text"
+          type="name"
         />
         <Textarea
           onBlur={formikRecipe.handleBlur}
@@ -194,7 +194,7 @@ export const RecipeForm = () => {
           }
           label="Instrucciones"
           placeholder="Instrucciones de elaboración"
-          type="text"
+          type="input"
         />
       </div>
       <div className="flex flex-row gap-2 items-center justify-start mt-4">
