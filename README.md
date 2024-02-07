@@ -47,7 +47,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 
 **This is a small application for creating kitchen menus.**
 
-## Provides easy-to-use features for composing kitchen menus.
-## Simplifies the process of selecting ingredients and planning meals.
-## Helps organize and structure cooking schedules effectively.
-## Feel free to explore and contribute to the project!
+ Provides easy-to-use features for composing kitchen menus.
+ Simplifies the process of selecting ingredients and planning meals.
+ Helps organize and structure cooking schedules effectively.
+ Feel free to explore and contribute to the project!
