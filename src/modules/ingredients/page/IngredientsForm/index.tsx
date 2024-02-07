@@ -171,7 +171,7 @@ export const IngredientsForm = () => {
   return (
     <form className="flex flex-col gap-4 p-4 m-8 border border-gray-300 rounded-lg w-1/2">
       <Input
-        className="border border-gray-400 rounded-large w-1/4 h-1/2"
+        className="border border-gray-400 rounded-large w-1/3 h-1/2"
         name="name"
         onBlur={formikIngredient.handleBlur}
         isRequired
