@@ -11,6 +11,7 @@ import { MainLayout } from "../../../shared/layouts";
 import RecipeRouter from "../../recipe/router";
 import { appSelector } from "../../../shared/redux/message";
 import { Message } from "../../../shared/components/Message";
+import HomeRouter from "../../home/router";
 
 export const AppRouter: FC = (): ReactElement => {
   const { showMsg } = useSelector(appSelector);
@@ -32,7 +33,17 @@ export const AppRouter: FC = (): ReactElement => {
               </Suspense>
             }
           />
-          <Route path="/" element={<MainLayout />}>
+          <Route path="menuplanner/" element={<MainLayout />}>
+            <Route
+              path="home/*"
+              element={
+                <PrivateRoute isAllowed={!!user}>
+                  <Suspense>
+                    <HomeRouter />
+                  </Suspense>
+                </PrivateRoute>
+              }
+            />
             <Route
               path="menu/*"
               element={

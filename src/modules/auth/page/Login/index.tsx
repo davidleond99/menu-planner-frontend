@@ -34,20 +34,20 @@ export const Login: FC = () => {
     try {
       const response = await dispatch(loginUser(user)).unwrap();
       if (response) {
-        navigate("/menu/principal", { replace: true });
+        navigate("/menuplanner/home", { replace: true });
       } else {
         dispatch(
           showMsg({
-            type: "success",
-            msg: "Inicie sesión",
+            type: "failure",
+            msg: "Credenciales erróneas",
           })
         );
       }
     } catch (error) {
       dispatch(
         showMsg({
-          type: "success",
-          msg: "Inicie sesión",
+          type: "failure",
+          msg: "Credenciales erróneas",
         })
       );
     }
@@ -155,7 +155,7 @@ export const Login: FC = () => {
                 isLoading={loading}
                 disabled={!formikLogin.isValid || !formikLogin.dirty}
                 aria-label="login"
-                type="submit"
+                type="button"
                 className="w-full bg-gradient-to-tl from-green-300 to-indigo-400 cursor-pointer py-4 uppercase mt-4 font-semibold "
                 onClick={handleSubmit}
               >

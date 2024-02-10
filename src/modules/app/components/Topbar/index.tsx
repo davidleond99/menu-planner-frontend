@@ -29,6 +29,7 @@ export const Topbar: FC<TopbarProps> = ({
           <Icon
             onClick={() => {
               localStorage.removeItem("token");
+              localStorage.removeItem("user");
               dispatch(logout());
               navigate("/auth/login", { replace: true });
             }}

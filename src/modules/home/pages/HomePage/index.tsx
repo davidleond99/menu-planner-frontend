@@ -10,15 +10,15 @@ import {
 } from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { useAppDispatch } from "../../../../shared/store";
-import { getMenuByUserId } from "../../application";
-import { IGetMenusAll } from "../../types";
 import { IIngredient } from "../../../ingredients/types";
 import { Icon } from "../../../../shared/components/Icon";
 import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { authSelector } from "../../../auth/redux";
 import { useSelector } from "react-redux";
+import { getMenuByUserId } from "../../../menu/application";
+import { IGetMenusAll } from "../../../menu/types";
 
-export const MenuPrincipal = () => {
+export const HomePage = () => {
   const getDayOfWeek = (date: Date) => {
     const options = { weekday: "long" as const };
     return new Intl.DateTimeFormat("es-ES", options).format(date);

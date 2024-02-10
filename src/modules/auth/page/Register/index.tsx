@@ -51,7 +51,7 @@ export const Register: FC<IRegisterProps> = () => {
         })
       );
       dispatch(showMsg({ msg: "Usuario Creado", type: "success" }));
-      navigate("auth/login");
+      navigate("/auth/login");
     } catch (error) {
       dispatch(showMsg({ msg: "error", type: "failure" }));
     }

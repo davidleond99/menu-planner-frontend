@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 
 const customAxiosConfig = (url: string) => {
   const axiosConfig: AxiosRequestConfig = {
     headers: {
-      Accept: '*/*',
-      'Content-Type': 'application/json;charset=UTF-8',
+      Accept: "*/*",
+      "Content-Type": "application/json;charset=UTF-8",
     },
     baseURL: url,
   };
@@ -22,7 +22,7 @@ const customAxiosApp = axios.create(
 
 customAxiosApp.interceptors.request.use(
   (config) => {
-    config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
+    config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`;
     return config;
   },
   (error) => {
@@ -37,8 +37,11 @@ customAxiosApp.interceptors.response.use(
   (error: AxiosError<any>) => {
     if (error.response?.status === 401) {
       localStorage.clear();
-      localStorage.setItem('expired', 'expired');
-      window.location.replace('/auth/login');
+      localStorage.setItem("expired", "expired");
+      window.location.replace("/auth/login");
+    } else if (error.response?.status === 304) {
+      console.log("here");
+      window.location.replace("menuplanner/home");
     }
     return Promise.reject(error);
   }

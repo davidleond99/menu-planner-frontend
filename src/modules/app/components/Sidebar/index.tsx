@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, FC, ReactElement } from "react";
 import { NavLink } from "..";
 import { INavLink } from "../../../../shared/interfaces";
 import { Icon } from "../../../../shared/components";
-import {  faUtensils } from "@fortawesome/free-solid-svg-icons";
+import { faUtensils } from "@fortawesome/free-solid-svg-icons";
 
 interface SidebarProps {
   setShowSideBar: Dispatch<SetStateAction<boolean>>;
@@ -14,17 +14,19 @@ export const Sidebar: FC<SidebarProps> = ({
   setShowSideBar,
 }): ReactElement => {
   const routes: INavLink[] = [
-    { to: "menu/principal", label: "Principal" },
-    { to: "menu", label: "Menu", end: true },
-    { to: "recipe", label: "Recetas" },
-    { to: "ingredients", label: "Ingredientes" },
+    { to: "/menuplanner/home", label: "Principal" },
+    { to: "/menuplanner/menu", label: "Menu" },
+    { to: "/menuplanner/recipe", label: "Recetas" },
+    { to: "/menuplanner/ingredients", label: "Ingredientes" },
   ];
   return (
     <>
       <div className="absolute hidden h-screen w-64 bg-white shadow lg:relative lg:block">
         <div className="flex h-16 w-full items-center px-8">
-          <Icon className="text-blue-500 mt-1" size="xl" icon={faUtensils}/>
-          <span className="ml-2 text-xl text-blue-500 font-bold">MenuPlanner</span>
+          <Icon className="text-blue-500 mt-1" size="xl" icon={faUtensils} />
+          <span className="ml-2 text-xl text-blue-500 font-bold">
+            MenuPlanner
+          </span>
         </div>
         <ul aria-orientation="vertical" className="py-3">
           {routes.map((route) => (
