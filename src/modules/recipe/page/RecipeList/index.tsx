@@ -73,28 +73,24 @@ export const RecipeList = () => {
         Añadir Receta
       </Button>
 
-      <div className="w-full p-8 flex justify-center items-center">
+      <div className="w-full p-8 flex items-center">
         <Table className="">
           <TableHeader className="">
             <TableColumn>Nombre</TableColumn>
-            <TableColumn className="flex justify-center content-center items-center">
+            <TableColumn className="flex content-center items-center">
               Instrucciones
             </TableColumn>
-            <TableColumn >Acciones</TableColumn>
+            <TableColumn>Acciones</TableColumn>
           </TableHeader>
           <TableBody>
             {recipes.length > 0 ? (
               recipes.map((recipe) => (
                 <TableRow key={recipe.id}>
-                  <TableCell className="">
-                    {recipe.name}
-                  </TableCell>
-                  <TableCell className="">
-                    {recipe.instructions}
-                  </TableCell>
+                  <TableCell className="text-start">{recipe.name}</TableCell>
+                  <TableCell className="text-start">{recipe.instructions}</TableCell>
 
-                  <TableCell className="w-1/4">
-                    <div className="">
+                  <TableCell className="w-1/4 text-start">
+                    <div>
                       <Tooltip content="Ver ingredientes">
                         <Button
                           aria-label="Ver ingredientes"

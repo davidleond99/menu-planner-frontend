@@ -98,18 +98,16 @@ export const MenuList = () => {
             {menus.length > 0 ? (
               menus.map((menu) => (
                 <TableRow key={menu.id}>
-                  <TableCell className=" justify-start content-start">
-                    {menu.name}
-                  </TableCell>
-                  <TableCell className=" justify-start content-start">
+                  <TableCell className="text-start">{menu.name}</TableCell>
+                  <TableCell className="text-start">
                     {new Date(menu.dateStart).toDateString()}
                   </TableCell>
-                  <TableCell className=" justify-start content-start">
+                  <TableCell className="text-start">
                     {new Date(sumDaysToDate(menu.dateStart, 6)).toDateString()}
                   </TableCell>
 
                   <TableCell>
-                    <div className=" justify-start content-start">
+                    <div className="text-start">
                       <Tooltip content="Ver menu">
                         <Button
                           aria-label="Ver menu"

@@ -79,7 +79,7 @@ export const HomePage = () => {
           <Table aria-label="Example static collection table">
             <TableHeader>
               <TableColumn>Nombre</TableColumn>
-              <TableColumn>Fecasdasdha de inicio</TableColumn>
+              <TableColumn>Fecha de inicio</TableColumn>
               <TableColumn>Fecha de fin</TableColumn>
               <TableColumn>Acciones</TableColumn>
             </TableHeader>
@@ -87,17 +87,17 @@ export const HomePage = () => {
               {menus.length > 0 ? (
                 menus.map((menu, index) => (
                   <TableRow key={index + 1}>
-                    <TableCell>{menu.name}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-start">{menu.name}</TableCell>
+                    <TableCell className="text-start">
                       {new Date(menu.dateStart).toDateString()}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-start">
                       {" "}
                       {new Date(
                         sumDaysToDate(menu.dateStart, 6)
                       ).toDateString()}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-start">
                       <div className=" justify-start content-start">
                         <Tooltip content="Ver lista compra">
                           <Button
@@ -107,8 +107,19 @@ export const HomePage = () => {
                               viewShoppingList(menu);
                             }}
                             size="sm"
-                            className="w-1/4 mr-4 bg-teal-300"
-                            endContent={<Icon icon={faShoppingCart} />}
+                            className={`w-1/4 mr-4 ${
+                              selectedMenu?.id === menu.id
+                                ? "bg-gray-900"
+                                : "bg-teal-300"
+                            }`}
+                            endContent={
+                              <Icon
+                                color={`${
+                                  selectedMenu?.id === menu.id ? "white" : ""
+                                }`}
+                                icon={faShoppingCart}
+                              />
+                            }
                           />
                         </Tooltip>
                       </div>

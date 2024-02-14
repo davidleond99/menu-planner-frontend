@@ -43,6 +43,7 @@ export const RecipeForm = () => {
     } else {
       handleCreate();
     }
+    setTimeout(() => {}, 1000);
     navigate(-1);
   };
 

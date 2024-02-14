@@ -71,12 +71,16 @@ export const IngredientsList = () => {
             {ingredients.length > 0 ? (
               ingredients.map((ingredient) => (
                 <TableRow key={ingredient.id}>
-                  <TableCell className="fle items-start">
+                  <TableCell className="text-start">
                     {ingredient.name}
                   </TableCell>
-                  <TableCell>{ingredient.category}</TableCell>
-                  <TableCell>{ingredient.unity}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-start">
+                    {ingredient.category}
+                  </TableCell>
+                  <TableCell className="text-start">
+                    {ingredient.unity}
+                  </TableCell>
+                  <TableCell className="text-start">
                     <div>
                       <Tooltip content="Editar">
                         <Button

@@ -54,6 +54,7 @@ export const IngredientsForm = () => {
         unity: "",
       },
     });
+    // setTimeout(() => {}, 1000);
     navigate(-1);
   };
   const handleCreate = () => {
@@ -241,7 +242,12 @@ export const IngredientsForm = () => {
         ))}
       </Select>
       <div className="flex justify-end m-3">
-        <Button color="danger" className="mr-3" onClick={handleCancel} variant="light">
+        <Button
+          color="danger"
+          className="mr-3"
+          onClick={handleCancel}
+          variant="light"
+        >
           Cancelar
         </Button>
         <Button
